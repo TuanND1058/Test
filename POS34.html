@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #preview{
+            border: 1px solid gray;
+            width: 330px;
+            text-align: center;
+        }
+        pre{
+            margin: 0;
+        }
+        .bg-red {
+            background-color: rgba(255, 108, 108, 0.466);
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<body>
+
+    <button id="btnAdd" type="button" data-countId="1" onclick="addNewLine()">add</button>
+    <div id="create"></div>
+    <div id="preview" style="margin-top: 10px;"></div>
+
+<script>
+    $(document).ready(function() {
+        // // Đăng ký sự kiện khi giá trị của input radio thay đổi
+        // $('input[type="radio"]').change(function() {
+        //     // Lấy giá trị của input radio được chọn
+        //     var selectedValue = $(this).val();
+
+        //     // Hiển thị giá trị của input radio được chọn trong console
+        //     console.log("Giá trị đã thay đổi: " + selectedValue);
+
+        //     // Thực hiện các hành động khác tùy thuộc vào giá trị đã chọn
+        //     // Ví dụ: hiển thị một cảnh báo
+        //     alert("Bạn đã chọn giá trị: " + selectedValue);
+
+        //     // Hoặc thực hiện các hành động khác tùy thuộc vào giá trị đã chọn ở đây...
+        // });
+    });
+
+    var dataOr = [];
+
+    function addNewLine() {
+        // Lấy số lượng hiện tại của các thẻ div trong #create
+        var btnAdd = document.getElementById("btnAdd");
+        var countId = btnAdd.getAttribute('data-countId');
+
+        // Tạo một thẻ div mới
+        var newDiv = document.createElement("div");
+        newDiv.id = "line" + countId;
+
+        // Tạo một thẻ radio mới
+        var newDivRadio = document.createElement("div");
+        newDivRadio.style.display = "inline";
+        // Tạo các phần tử label và input
+        var labels = ["left", "center", "right"];
+        var values = [0, 1, 2];
+        for (var i = 0; i < labels.length; i++) {
+            // Tạo thẻ label
+            var label = document.createElement("label");
+            label.setAttribute("for", "rdo" + countId + (i + 1));
+            label.textContent = labels[i];
+
+            // Tạo thẻ input
+            var input = document.createElement("input");
+            input.type = "radio";
+            input.id = "rdo" + countId + (i + 1);
+            input.name = "textInput" + countId;
+            input.value = values[i];
+            input.checked = values[i] === 0 ? true : false;
+            input.setAttribute("onchange", "updateDivText('" + "textInput" + countId + "', " + countId + ")");
+
+            // Thêm label và input vào thẻ div mới
+            newDivRadio.appendChild(label);
+            newDivRadio.appendChild(input);
+        }
+        //newDivRadio.setAttribute('data-alignment', );
+
+        // Tạo một thẻ input mới
+        var newInput = document.createElement("input");
+        newInput.type = "text";
+        newInput.id = "textInput" + countId;
+        newInput.setAttribute("oninput", "updateDivText('" + "textInput" + countId + "', " + countId + ")");
+        newInput.placeholder = "Enter text...";
+
+        // Tạo một thẻ button mới để xóa
+        var newButton = document.createElement("button");
+        newButton.type = "button";
+        newButton.setAttribute("onclick", "removeLine('" + newDiv.id + "', " + countId + ")");
+        newButton.textContent = "remove";
+
+        // Thêm thẻ input và thẻ button vào thẻ div mới
+        newDiv.appendChild(newInput);
+        newDiv.appendChild(newDivRadio);
+        newDiv.appendChild(newButton);
+
+        // Thêm thẻ div mới vào #create
+        document.getElementById("create").appendChild(newDiv);
+
+        btnAdd.setAttribute('data-countId', +countId + 1);
+
+        updateDivText(newInput.id, countId);
+    }
+
+    function removeLine(lineId, seq) {
+        var divToRemove = document.getElementById(lineId);
+
+        if (divToRemove) {
+            divToRemove.remove();
+        }
+
+        dataOr = dataOr.filter(item => item.seq !== seq);
+
+        reloadPreview();
+    }
+
+    function updateDivText(id, seq) {
+        // lấy value radio
+        var alignment = $('input[type="radio"][name="' + id + '"]:checked').val();
+
+        var textInput = $("#" + id);
+        var sptText = splitText(textInput.val());
+        var result = alignText(sptText, +alignment);
+        if (sptText.length > 40) {
+            textInput.addClass("bg-red");
+        } else {
+            textInput.removeClass("bg-red");
+        }
+
+        // var previewInput = document.querySelector('pre[data-idInput="' + id + '"]');
+        // if (previewInput) {
+        //     previewInput.textContent = result;
+        // }
+
+        fnDataDetail(seq, result)
+
+        reloadPreview();
+
+        console.log(dataOr);
+    }
+
+    function reloadPreview() {
+        // let previewDiv = document.getElementById("preview");
+
+        // previewDiv.innerHTML = '';
+
+        // let preElement = document.createElement('pre');
+
+        // let preContent = dataOr.map(item => item.value).join('\n');
+
+        // preElement.textContent = preContent;
+
+        // previewDiv.appendChild(preElement);
+
+        let previewDiv = document.getElementById("preview");
+
+        previewDiv.innerHTML = '';
+
+        dataOr.forEach(item => {
+            let preElement = document.createElement('pre');
+
+            preElement.textContent = item.value;
+
+            previewDiv.appendChild(preElement);
+        });
+    }
+
+    function fnDataDetail(seq, value) {
+        let indexToUpdate = dataOr.findIndex(item => item.seq === seq);
+
+        if (indexToUpdate !== -1) {
+            dataOr[indexToUpdate].value = value;
+        } else {
+            dataOr.push({ seq: +seq, value });
+        }
+    }
+
+
+    // var text1 = splitText("A안 녕 하 세 요안                  18,123");
+    // var text2 = splitText("안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요");
+    // var text3 = splitText("안 녕 하세asdasd요안녕하세안녕녕하세");
+    // var text4 = splitText("안 녕하 세요녕하 세");
+    // var text5 = splitText("안녕하세요안녕하세요안녕하세요안녕하세요안녕하as");
+    // console.log("[" + text1.text + "]");
+    // console.log("[" + text2.text + "]");
+    // console.log("[" + alignText(text3) + "]");
+    // console.log("[" + alignText(text4) + "]");
+    // console.log("[" + alignText(text5) + "]");
+
+    // var textInput = "안녕하세요안녕하세요안녕하세요안녕하세요안녕하as";
+    //rundata(textInput);
+
+    function runData(textInput) {
+        var sptText = splitText(textInput);
+        var result = alignText(sptText);
+        if (sptText.length > 40) {
+            alert("size");
+        }
+        return result;
+    }
+
+    ///
+    ///
+    ///
+    function splitText(txtInput, width = 40) {
+        var result = "";
+        var count = 0;
+        var array = txtInput.split('');
+        for (let i = 0; i < array.length; i++) {
+            var char = array[i];
+            // used for the English alphabet = 1; used for Korean text length = 3
+            var length = new Blob([char]).size;
+            count += (length > 2 ? 2 : 1);
+            if (count > width) {
+                break;
+            }
+            result += char;
+        }
+        return { text: result, length: count};
+    }
+
+    ///
+    ///
+    ///
+    function alignText(data, alignment = 0, width = 40) {
+        var result = data.text;
+        var count = data.length;
+
+        // Calculate the length of the missing space
+        var widthSpace = width - count < 0 ? 0 : width - count;
+
+        // Left alignment
+        if (alignment === 0) {
+            for (var i = 0; i < widthSpace; i++) {
+                result = result + " ";
+            }
+        }
+
+        // Center alignment
+        if (alignment === 1) {
+            for (var i = 0; i < Math.floor(widthSpace / 2); i++) {
+                result = " " + result + " ";
+            }
+            result += widthSpace % 2 === 0 ? "" : " ";
+        }
+
+        // Right alignment
+        if (alignment === 2) {
+            for (var i = 0; i < widthSpace; i++) {
+                result = " " + result;
+            }
+        }
+
+        return result;
+    }
+</script>
+</body>
+</html>

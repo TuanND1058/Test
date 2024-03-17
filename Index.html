@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  </head>
+  <body>
+    <input type="text" name="" id="startDate" />
+    <input type="text" name="" id="endDate" />
+
+    <script>
+      $(document).ready(function () {
+        var currentDate = new Date()
+        var currentDateString = currentDate.toISOString().substr(0, 10)
+        $('#startDate').val(currentDateString)
+        $('#endDate').val(currentDateString)
+
+        /* This function works autofill for endDate */
+        $('#startDate').on('change', function () {
+          var startDateValue = new Date($('#startDate').val())
+          var endDateValue = new Date($('#endDate').val())
+
+          // Calculate the number of months between startDate and endDate
+          var monthsApart = (endDateValue.getFullYear() - startDateValue.getFullYear()) * 12 + (endDateValue.getMonth() - startDateValue.getMonth())
+
+          if (monthsApart == 1 && (startDateValue.getDate() < endDateValue.getDate())) {
+            endDateValue.setDate(startDateValue.getDate())
+          } else if (monthsApart < 0 || monthsApart > 1 || (monthsApart == 0 && (startDateValue.getDate() > endDateValue.getDate()))) {
+            endDateValue = new Date(startDateValue)
+            endDateValue.setMonth(endDateValue.getMonth() + 1)
+
+            // Check if endDate does not have the same end date as startDate
+            if (startDateValue.getDate() > 28) {
+              for (var i = 0; i < 4; i++) {
+                var mApart = endDateValue.getMonth() - startDateValue.getMonth()
+                if (mApart > 1) {
+                  endDateValue.setDate(endDateValue.getDate() - 1)
+                } else {
+                  break
+                }
+              }
+            }
+          }
+
+          // Regenerate a new date for endDate
+          // endDateValue.setDate(endDateValue.getDate() - 1)
+          var newEndDate = endDateValue.toISOString().substr(0, 10)
+          $('#endDate').val(newEndDate)
+        })
+
+        /* This function works autofill for startDate */
+        $('#endDate').on('change', function () {
+          var startDateValue = new Date($('#startDate').val())
+          var endDateValue = new Date($('#endDate').val())
+
+          // Calculate the number of months between startDate and endDate
+          var monthsApart = (endDateValue.getFullYear() - startDateValue.getFullYear()) * 12 + (endDateValue.getMonth() - startDateValue.getMonth())
+
+          if (monthsApart == 1 && (startDateValue.getDate() < endDateValue.getDate())) {
+            startDateValue.setDate(endDateValue.getDate())
+          } else if (monthsApart < 0 || monthsApart > 1 || (monthsApart == 0 && (startDateValue.getDate() > endDateValue.getDate()))) {
+            startDateValue = new Date(endDateValue)
+            startDateValue.setMonth(startDateValue.getMonth() - 1)
+
+            // Check if startDate does not have the same end date as startDate
+            if (endDateValue.getDate() > 28) {
+              for (var i = 0; i < 4; i++) {
+                var mApart = endDateValue.getMonth() - startDateValue.getMonth()
+                if (mApart == 0) {
+                  startDateValue.setDate(startDateValue.getDate() - 1)
+                } else {
+                  startDateValue.setDate(startDateValue.getDate() + 1)
+                  break
+                }
+              }
+            }
+          }
+
+          // Regenerate a new date for endDate
+          var newStartDate = startDateValue.toISOString().substr(0, 10)
+          $('#startDate').val(newStartDate)
+        })
+      })
+    </script>
+  </body>
+</html>
