@@ -18,22 +18,56 @@
         padding: 5px;
     }
 
-    #preview{
-        border: 1px solid gray;
+    #preview {
+        border: 1px solid #797979;
         width: 330px;
         text-align: center;
         margin: 10px;
     }
-    pre{
+
+    pre {
         margin: 0;
         font-size: 14px;
+        width: 100%;
+        height: 15px;
+        line-height: 16px;
     }
+
     .bg-red {
         background-color: rgba(255, 108, 108, 0.466);
     }
 
-    .dtl-double-h{
-        font-size: 18px;
+    .hl-normal {
+
+    }
+
+    .hl-bold {
+        font-weight: bold;
+    }
+
+    .hl-double-h {
+        transform: scaleY(2);
+        transform-origin: top;
+        height: 28px;
+        line-height: 15px;
+    }
+
+    .hl-double-w {
+        transform: scaleX(2);
+        transform-origin: left;
+        width: 50%;
+    }
+
+    .hl-double-wh {
+        transform: scale(2);
+        transform-origin: top left;
+        width: 50%;
+        height: 28px;
+        line-height: 15px;
+    }
+
+    label:has(input[type="radio"]:disabled) {
+        color: #797979;
     }
     </style>
 </head>
@@ -45,7 +79,7 @@
             <tr>
                 <th>Print line</th>
                 <th>Alignment</th>
-                <th>Highline</th>
+                <th>Highlight</th>
                 <th>Etc</th>
                 <th> </th>
             </tr>
@@ -60,6 +94,7 @@
         var dataDetail = [];
 
         $(document).ready(function() {
+            // Event add row detail
             $('#addButton').click(function() {
                 addNewRowDetail();
                 fnLoadPreviewDetail();
@@ -68,22 +103,12 @@
             // Event listener for input in detail
             $('#tableDetail').on('input', 'input[type="text"]', function() {
                 const row = $(this).closest('tr');
-                fnUpdateDetailText(row);
+                fnUpdateRowDetail(row);
                 fnLoadPreviewDetail();
             });
-            $('#tableDetail').on('change', 'input[type="radio"]', function() {
+            $('#tableDetail').on('change', 'input[type="radio"], select', function() {
                 const row = $(this).closest('tr');
-                fnUpdateDetailText(row);
-                fnLoadPreviewDetail();
-            });
-            $('#tableDetail').on('change', 'td:nth-child(3) select', function() {
-                const row = $(this).closest('tr');
-                fnUpdateDetailText(row);
-                fnLoadPreviewDetail();
-            });
-            $('#tableDetail').on('change', 'td:nth-child(4) select', function() {
-                const row = $(this).closest('tr');
-                fnUpdateDetailText(row);
+                fnUpdateRowDetail(row);
                 fnLoadPreviewDetail();
             });
 
@@ -95,6 +120,9 @@
             });
         });
 
+        ///
+        /// addNewRowDetail
+        ///
         function addNewRowDetail() {
             //let seq = $(this).data("id") // .data() (if you use newer jQuery >= 1.4.3)
             let curSeq = $('#addButton').attr("data-seq");
@@ -113,8 +141,8 @@
             // Add radio buttons to column Alignment
             addInputAlignment(newRow, id);
 
-            // Add select elements to columns Highline
-            addInputHighline(newRow, id);
+            // Add select elements to columns Highlight
+            addInputHighlight(newRow, id);
 
             // Add select elements to columns Etc
             addInputEtc(newRow, id);
@@ -124,7 +152,7 @@
 
             $('#tableDetail tbody').append(newRow);
 
-            fnUpdateDetailText(newRow);
+            fnUpdateRowDetail(newRow);
         }
         function addInputPrintLine(newRow, id) {
             id = "prl" + id;
@@ -140,7 +168,7 @@
             radioCell.append('<label><input type="radio" name="' + id + '" value="2">Right</label>');
             newRow.append(radioCell);
         }
-        function addInputHighline(newRow, id) {
+        function addInputHighlight(newRow, id) {
             id = "hgl" + id;
             const selectCell1 = $('<td></td>').append(
                 '<select id="' + id + '">' +
@@ -169,35 +197,69 @@
             newRow.append(buttonCell);
         }
 
-        function fnUpdateDetailText(row) {
-            // get value row detail
-            const printLine = row.find('input[type="text"]');
-            const alignment = row.find('input[type="radio"]:checked').val();
-            const highline = row.find('select').eq(0).val();
-            const etc = row.find('select').eq(1).val();
-            var seq = row.attr("data-seq");
+        function fnUpdateRowDetail(row) {
+            // Get element row detail
+            const printLineElement = row.find('input[type="text"]');
+            const alignmentElement = row.find('input[type="radio"]');
+            const highlightElement = row.find('select').eq(0);
+            const etcElement = row.find('select').eq(1);
 
-            var sptText = fnSplitText(printLine.val());
-            var value = fnAlignText(sptText, alignment);
+            // Get value
+            var printLine = printLineElement.val();
+            var alignment = alignmentElement.filter(':checked').val();
+            var highlight = highlightElement.val();
+            var etc = etcElement.val();
+
+            var width = 40;
+
+            // DoubleW
+            if (highlight === '3') {
+                width = Math.floor(width / 2);
+            }
+
+            // DoubleWH
+            if (highlight === '4') {
+                width = Math.floor(width / 2);
+            }
+
+            // set enable options
+            printLineElement.prop('disabled', false);
+            alignmentElement.prop('disabled', false);
+            highlightElement.prop('disabled', false);
+
+            var tempValue = "";
+            if (etc === '1') {
+                alignmentElement.prop('disabled', true);
+                //alignmentElement.filter('[value="1"]').prop('checked', true);
+                highlightElement.prop('disabled', true);
+                //highlightElement.prop('selectedIndex', 0);
+
+                alignment = 1
+            }
 
             if (etc === '2') {
-                console.log("barcode");
-                printLine.attr('disabled','disabled');
-                value = '                                        ';
-                sptText.text = '';
-            } else {
-                printLine.removeAttr('disabled');
+                printLineElement.prop('disabled', true);
+                alignmentElement.prop('disabled', true);
+                //alignmentElement.first().prop('checked', true);
+                highlightElement.prop('disabled', true);
+                //highlightElement.prop('selectedIndex', 0);
+
+                printLine = '';
+                tempValue = "[barcode]";
             }
 
-            if (sptText.length > 40) {
-                printLine.addClass("bg-red");
+            var result = fnFormatText(printLine, alignment, highlight, width)
+
+            if (result.length > width) {
+                printLineElement.addClass("bg-red");
             } else {
-                printLine.removeClass("bg-red");
+                printLineElement.removeClass("bg-red");
             }
 
-            let detail = { printline: sptText.text, alignment, highline, etc}
+            var seq = row.attr("data-seq");
+            var value = etc !== '2' ? result.text : tempValue;
+            var detail = { printline: result.text.trim(), alignment, highlight, etc }
             fnPushDataDetail(seq, value, detail);
-            console.log(dataDetail);
         }
 
         ///
@@ -209,7 +271,27 @@
 
             $.each(dataDetail, function(index, item) {
                 const preElement = $("<pre>").text(item.value);
-                //preElement.addClass("dtl-double-h");
+
+                switch (item.detail.highlight) {
+                    case '0':
+                        preElement.addClass("hl-normal");
+                        break;
+                    case '1':
+                        preElement.addClass("hl-bold");
+                        break;
+                    case '2':
+                        preElement.addClass("hl-double-h");
+                        break;
+                    case '3':
+                        preElement.addClass("hl-double-w");
+                        break;
+                    case '4':
+                        preElement.addClass("hl-double-wh");
+                        break;
+                    default:
+                        break;
+                }
+
                 previewDiv.append(preElement);
             });
         }
@@ -293,6 +375,51 @@
             var result = data.text;
             var count = data.length;
 
+            // Left alignment
+            if (alignment === '0') {
+                for (var i = 0; i < widthSpace; i++) {
+                    result = result + " ";
+                }
+            }
+
+            // Center alignment
+            if (alignment === '1') {
+                for (var i = 0; i < Math.floor(widthSpace / 2); i++) {
+                    result = " " + result + " ";
+                }
+                result += widthSpace % 2 === 0 ? "" : " ";
+            }
+
+            // Right alignment
+            if (alignment === '2') {
+                for (var i = 0; i < widthSpace; i++) {
+                    result = " " + result;
+                }
+            }
+
+            return result;
+        }
+
+        ///
+        /// fnFormatText
+        ///
+        function fnFormatText(txtInput, alignment = '0', highlight = '0', width = 40) {
+            var result = "";
+            var count = 0;
+            var array = txtInput.split('');
+
+            // split text
+            for (let i = 0; i < array.length; i++) {
+                var char = array[i];
+                // used for the English alphabet = 1; used for Korean text length = 3
+                var length = new Blob([char]).size;
+                count += (length > 2 ? 2 : 1);
+                if (count > width) {
+                    break;
+                }
+                result += char;
+            }
+
             // Calculate the length of the missing space
             var widthSpace = width - count < 0 ? 0 : width - count;
 
@@ -318,7 +445,7 @@
                 }
             }
 
-            return result;
+            return { text: result, length: count };;
         }
     </script>
 </body>
