@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dynamic Table</title>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<style>
+    table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 800px;
+    }
+
+    td, th {
+        border: 1px solid #797979;
+        text-align: left;
+        padding: 5px;
+    }
+
+    #preview{
+        border: 1px solid gray;
+        width: 330px;
+        text-align: center;
+        margin: 10px;
+    }
+    pre{
+        margin: 0;
+        font-size: 14px;
+    }
+    .bg-red {
+        background-color: rgba(255, 108, 108, 0.466);
+    }
+
+    .dtl-double-h{
+        font-size: 18px;
+    }
+    </style>
+</head>
+<body>
+
+    <button id="addButton" type="button" data-seq="000">Add</button>
+    <table id="tableDetail">
+        <thead>
+            <tr>
+                <th>Print line</th>
+                <th>Alignment</th>
+                <th>Highline</th>
+                <th>Etc</th>
+                <th> </th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Table rows will be dynamically generated here -->
+        </tbody>
+    </table>
+    <div id="preview"></div>
+
+    <script>
+        var dataDetail = [];
+
+        $(document).ready(function() {
+            $('#addButton').click(function() {
+                addNewRowDetail();
+                fnLoadPreviewDetail();
+            });
+
+            // Event listener for input in detail
+            $('#tableDetail').on('input', 'input[type="text"]', function() {
+                const row = $(this).closest('tr');
+                fnUpdateDetailText(row);
+                fnLoadPreviewDetail();
+            });
+            $('#tableDetail').on('change', 'input[type="radio"]', function() {
+                const row = $(this).closest('tr');
+                fnUpdateDetailText(row);
+                fnLoadPreviewDetail();
+            });
+            $('#tableDetail').on('change', 'td:nth-child(3) select', function() {
+                const row = $(this).closest('tr');
+                fnUpdateDetailText(row);
+                fnLoadPreviewDetail();
+            });
+            $('#tableDetail').on('change', 'td:nth-child(4) select', function() {
+                const row = $(this).closest('tr');
+                fnUpdateDetailText(row);
+                fnLoadPreviewDetail();
+            });
+
+            // Event listener for remove button
+            $('#tableDetail').on('click', '.removeRowDetail', function() {
+                const row = $(this).closest('tr');
+                fnRemoveRowDetail(row);
+                fnLoadPreviewDetail();
+            });
+        });
+
+        function addNewRowDetail() {
+            //let seq = $(this).data("id") // .data() (if you use newer jQuery >= 1.4.3)
+            let curSeq = $('#addButton').attr("data-seq");
+            curSeq++;
+            let newSeq = ('00' + curSeq).slice(-3);
+
+            $('#addButton').attr("data-seq", newSeq);
+            let id = "rowDetail" + newSeq;
+
+            const newRow = $('<tr></tr>');
+            newRow.attr("data-seq", newSeq);
+
+            // Add input element to column Print line
+            addInputPrintLine(newRow, id);
+
+            // Add radio buttons to column Alignment
+            addInputAlignment(newRow, id);
+
+            // Add select elements to columns Highline
+            addInputHighline(newRow, id);
+
+            // Add select elements to columns Etc
+            addInputEtc(newRow, id);
+
+            // Add button to column Button
+            addInputButton(newRow, id);
+
+            $('#tableDetail tbody').append(newRow);
+
+            fnUpdateDetailText(newRow);
+        }
+        function addInputPrintLine(newRow, id) {
+            id = "prl" + id;
+            const inputCell = $('<td></td>')
+                .append('<input type="text" id="' + id + '" placeholder="Enter text...">');
+            newRow.append(inputCell);
+        }
+        function addInputAlignment(newRow, id) {
+            id = "ali" + id;
+            const radioCell = $('<td></td>');
+            radioCell.append('<label><input type="radio" name="' + id + '" value="0" checked>Left</label>');
+            radioCell.append('<label><input type="radio" name="' + id + '" value="1">Center</label>');
+            radioCell.append('<label><input type="radio" name="' + id + '" value="2">Right</label>');
+            newRow.append(radioCell);
+        }
+        function addInputHighline(newRow, id) {
+            id = "hgl" + id;
+            const selectCell1 = $('<td></td>').append(
+                '<select id="' + id + '">' +
+                    '<option value="0" selected>Normal</option>' +
+                    '<option value="1">Bold</option>' +
+                    '<option value="2">DoubleH</option>' +
+                    '<option value="3">DoubleW</option>' +
+                    '<option value="4">DoubleWH</option>' +
+                '</select>');
+            newRow.append(selectCell1);
+        }
+        function addInputEtc(newRow, id) {
+            id = "etc" + id;
+            const selectCell2 = $('<td></td>').append(
+                '<select id="' + id + '">' +
+                    '<option value="0" selected>Normal</option>' +
+                    '<option value="1">Gift Code</option>' +
+                    '<option value="2">Barcode</option>' +
+                '</select>');
+            newRow.append(selectCell2);
+        }
+        function addInputButton(newRow, id) {
+            id = "btn" + id;
+            const buttonCell = $('<td></td>').append(
+                '<button class="removeRowDetail" id="' + id + '" type="button">Remove</button>');
+            newRow.append(buttonCell);
+        }
+
+        function fnUpdateDetailText(row) {
+            // get value row detail
+            const printLine = row.find('input[type="text"]');
+            const alignment = row.find('input[type="radio"]:checked').val();
+            const highline = row.find('select').eq(0).val();
+            const etc = row.find('select').eq(1).val();
+            var seq = row.attr("data-seq");
+
+            var sptText = fnSplitText(printLine.val());
+            var value = fnAlignText(sptText, alignment);
+
+            if (etc === '2') {
+                console.log("barcode");
+                printLine.attr('disabled','disabled');
+                value = '                                        ';
+                sptText.text = '';
+            } else {
+                printLine.removeAttr('disabled');
+            }
+
+            if (sptText.length > 40) {
+                printLine.addClass("bg-red");
+            } else {
+                printLine.removeClass("bg-red");
+            }
+
+            let detail = { printline: sptText.text, alignment, highline, etc}
+            fnPushDataDetail(seq, value, detail);
+            console.log(dataDetail);
+        }
+
+        ///
+        /// fnLoadPreviewDetail
+        ///
+        function fnLoadPreviewDetail() {
+            const previewDiv = $("#preview");
+            previewDiv.empty();
+
+            $.each(dataDetail, function(index, item) {
+                const preElement = $("<pre>").text(item.value);
+                //preElement.addClass("dtl-double-h");
+                previewDiv.append(preElement);
+            });
+        }
+        function fnLoadPreviewDetailOld() {
+            // preview each line per <pre> tag
+                let previewDiv = document.getElementById("preview");
+                previewDiv.innerHTML = '';
+
+                dataDetail.forEach(item => {
+                    let preElement = document.createElement('pre');
+                    preElement.textContent = item.value;
+                previewDiv.appendChild(preElement);
+            });
+        }
+        function fnLoadPreviewDetail2() {
+            // preview each line on a <pre> tag
+            let previewDiv = document.getElementById("preview");
+            previewDiv.innerHTML = '';
+
+            let preElement = document.createElement('pre');
+            let preContent = dataDetail.map(item => item.value).join('\n');
+            preElement.textContent = preContent;
+            previewDiv.appendChild(preElement);
+        }
+
+        ///
+        /// fnPushDataDetail
+        ///
+        function fnPushDataDetail(seq, value, detail) {
+            let indexToUpdate = dataDetail.findIndex(item => item.seq === seq);
+
+            if (indexToUpdate !== -1) {
+                dataDetail[indexToUpdate].value = value;
+                dataDetail[indexToUpdate].detail = detail;
+            } else {
+                dataDetail.push({ seq, value, detail });
+            }
+        }
+
+        ///
+        /// fnRemoveRowDetail
+        ///
+        function fnRemoveRowDetail(row) {
+            const printLine = row.find('input[type="text"]').val();
+            let confirmMessage = 'Are you sure you want to remove the row?';
+
+            if (printLine) {
+                confirmMessage = 'Are you sure you want to remove the row with the following information?\n' +
+                'Print line: ' + printLine;
+            }
+
+            if (confirm(confirmMessage)) {
+                row.remove();
+            }
+        }
+
+        ///
+        /// fnSplitText
+        ///
+        function fnSplitText(txtInput, width = 40) {
+            var result = "";
+            var count = 0;
+            var array = txtInput.split('');
+            for (let i = 0; i < array.length; i++) {
+                var char = array[i];
+                // used for the English alphabet = 1; used for Korean text length = 3
+                var length = new Blob([char]).size;
+                count += (length > 2 ? 2 : 1);
+                if (count > width) {
+                    break;
+                }
+                result += char;
+            }
+            return { text: result, length: count};
+        }
+
+        ///
+        /// fnAlignText
+        ///
+        function fnAlignText(data, alignment = '0', width = 40) {
+            var result = data.text;
+            var count = data.length;
+
+            // Calculate the length of the missing space
+            var widthSpace = width - count < 0 ? 0 : width - count;
+
+            // Left alignment
+            if (alignment === '0') {
+                for (var i = 0; i < widthSpace; i++) {
+                    result = result + " ";
+                }
+            }
+
+            // Center alignment
+            if (alignment === '1') {
+                for (var i = 0; i < Math.floor(widthSpace / 2); i++) {
+                    result = " " + result + " ";
+                }
+                result += widthSpace % 2 === 0 ? "" : " ";
+            }
+
+            // Right alignment
+            if (alignment === '2') {
+                for (var i = 0; i < widthSpace; i++) {
+                    result = " " + result;
+                }
+            }
+
+            return result;
+        }
+    </script>
+</body>
+</html>
