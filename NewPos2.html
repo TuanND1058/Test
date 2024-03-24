@@ -15,31 +15,75 @@
 
 </head>
 <style>
-    body{
-        font-size: 12px;
-    }
+body{
+    font-size: 12px;
+}
+
 .non-resize-textarea {
-    overflow: hidden; /* Ngăn chặn hiển thị thanh cuộn */
+    overflow: hidden;
     resize: none;
-    line-height: 1.642;
+    line-height: 1.929;
     height: 33px;
 }
+
 .preview {
+    position: sticky;
+    top: 15px;
+    max-height: 500px;
+    overflow-y: auto;
     text-align: center;
     border: 1px solid gray;
-    padding: 5px 0;
+    padding: 5px 10px;
 }
-pre {
-    padding: 0;
-    margin: 0;
-    font-size: 12px;
-    border: transparent;
-    line-height: 1.1;
-}
+
 table, th, td {
     border: 1px solid black;
     border-collapse: collapse;
 }
+
+td {
+    padding: 0 5px;
+}
+
+pre {
+    display: block;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    border: transparent;
+    background-color: transparent;
+    line-height: 1.1;
+    overflow: hidden;
+    width: 100%;
+}
+
+.hl-normal {
+
+}
+
+.hl-bold {
+    font-weight: bold;
+}
+
+.hl-double-h {
+    transform: scaleY(2);
+    transform-origin: top;
+    margin-bottom: 12px;
+}
+
+.hl-double-w {
+    transform: scaleX(2);
+    transform-origin: left;
+    width: 50%;
+}
+
+.hl-double-wh {
+    transform: scale(2);
+    transform-origin: top left;
+    width: 50%;
+    margin-bottom: 12px;
+}
+
 label {
     margin: 0;
 }
@@ -53,11 +97,11 @@ label {
     <div class="col-md-8" style="background-color: #dddddd;">
         <div class="row">
             <div class="col-md-5">
-                <div style="margin-bottom: 20px;">Print Line</div>
-                <textarea class="non-resize-textarea" id="txtPrintLine" rows="1" cols="47"></textarea>
+                <div style="margin-bottom: 23px;">Print Line</div>
+                <textarea class="non-resize-textarea" id="txtInputText" rows="1" cols="47"></textarea>
             </div>
             <div class="col-md-7" style="background-color: #ffc9c9;">
-                <table id="tblPreview">
+                <table id="tblOptions">
                     <thead>
                         <tr>
                             <th>
@@ -166,7 +210,6 @@ label {
                 </table>
             </div>
         </div>
-        <!-- <textarea class="" id="txtPrintLine2" rows="5" cols="50"></textarea> -->
     </div>
     <div id="divPreview" class="col-md-4 preview">
         <pre>태그의 각 줄 미리보기</pre>
@@ -179,768 +222,106 @@ label {
 Lorem ipsum dolor sit, amet consectetur adipisicing elit. Consequuntur illum repellat accusantium asperiores atque. Exercitationem perferendis aliquam at quo aliquid omnis nesciunt voluptatem eos numquam cumque? Culpa placeat dignissimos dicta.
 
 <script>
-
+var sizePerLine = 40;
 var printLines = [];
 var editingInfo = {
-        previousLine: 1,
-        currentLine: 1,
-        rowCount: 1
-    };
-
+    previousLine: 1,
+    currentLine: 1,
+    rowCount: 1
+};
 var dataDetail = [
     {
-        seq: 1,
-        buffer: '',
+        seq: '001',
+        textOrigin: '',
+        buffer: ' ',
         alignment: '0',
         highlight: '0',
         etc: '0',
         ejs: '0'
-    },
-    // {
-    //     seq: '002',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '003',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '004',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '005',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '006',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '007',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '008',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '009',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '010',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '011',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '012',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '013',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '014',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '015',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '016',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '017',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '018',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '019',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '020',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '021',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '022',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '023',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '024',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '025',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '026',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '027',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '028',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '029',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '030',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '031',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '032',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '033',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '034',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '035',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '036',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '037',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '038',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '039',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '040',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '040',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '042',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '043',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '044',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '045',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '046',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '047',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '048',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '049',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '050',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '051',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '052',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '053',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '054',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '055',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '056',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '057',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '058',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '059',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '060',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '061',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '062',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '063',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '064',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '065',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '066',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '067',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '068',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '069',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '070',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '071',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '072',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '073',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '074',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '075',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '076',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '077',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '078',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '079',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '080',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '081',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '082',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '083',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '084',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '085',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '086',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '087',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '088',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // },
-    // {
-    //     seq: '089',
-    //     buffer: '',
-    //     alignment: '1',
-    //     highlight: '1',
-    //     etc: '1',
-    //     ejs: '1'
-    // }
+    }
 ];
 
 $(document).ready(function(){
 
-    // Gọi hàm updateTable để cập nhật bảng với mảng dữ liệu
-    fnRenderRowDetailTable(dataDetail);
+    // call the function to update the table with the initial preview
+    fnRenderRowDetailTable('#tblOptions');
+    fnRenderPreviewDetail('#divPreview');
 
-    $('#txtPrintLine2').on('input', function() {
-        fnAutoNewlines('#txtPrintLine2');
+    $('#txtInputText').on('input', function(event) {
+        fnAutoNewlines('#txtInputText');
+
+        fnSetEditingInfo('#txtInputText');
+
+        fnRenderRowDetailTable('#tblOptions');
+
+        fnRenderPreviewDetail('#divPreview');
+
+        console.log(dataDetail);
     });
 
-    $('#txtPrintLine').on('input', function(event) {
-        console.log('--------------------------');
-        fnAutoNewlines('#txtPrintLine');
-        $(this).css('height', 'auto').height(this.scrollHeight);
-        fnGetEditingInfo('#txtPrintLine');
+    $('#tblOptions tbody').on('change', 'input[type="radio"], select', function() {
+        var row = $(this).closest('tr');
+        fnUpdateOptionsDetail(row);
+
+        fnRenderPreviewDetail('#divPreview');
+
+        console.log(dataDetail);
     });
 
-    $('#txtPrintLine').on('click', function() {
-        var currentLine = fnGetCaretPosition('#txtPrintLine');
-        editingInfo.previousLine = editingInfo.currentLine;
+    $('#txtInputText').on('click', function() {
+        var currentLine = fnGetCaretPosition('#txtInputText');
+        editingInfo.previousLine = currentLine;
         editingInfo.currentLine = currentLine;
     });
 
 });
 
 ///
-/// fnUpdateTable
+/// fnUpdateOptionsDetail : updated text formatting options in data array
 ///
-function fnRenderRowDetailTable(dataArray) {
-    // Xóa tất cả các hàng hiện có trong phần tbody của bảng
-    $('#tblPreview tbody').empty();
+function fnUpdateOptionsDetail(row) {
+    // get element row detail
+    var alignmentElement = row.find('input[type="radio"]');
+    var highlightElement = row.find('select').eq(0);
+    var etcElement = row.find('select').eq(1);
+    var ejsElement = row.find('select').eq(2);
 
-    // Lặp qua mảng dataArray và thêm các hàng mới vào bảng
-    dataArray.forEach(function(data) {
+    // get value
+    var alignment = alignmentElement.filter(':checked').val();
+    var highlight = highlightElement.val();
+    var etc = etcElement.val();
+    var ejs = ejsElement.val();
+
+    var seq = row.data("seq");
+
+    var dataToUpdate = dataDetail.find(item => item.seq === seq);
+
+    var textFormat = fnFormatText(dataToUpdate.textOrigin, alignment, highlight, sizePerLine);
+
+    dataToUpdate.textOrigin = textFormat.textOrigin;
+    dataToUpdate.buffer = textFormat.text;
+    dataToUpdate.alignment = alignment;
+    dataToUpdate.highlight = highlight;
+    dataToUpdate.etc = etc;
+    dataToUpdate.ejs = ejs;
+
+    console.log(dataDetail);
+}
+
+///
+/// fnUpdateTable : create a table containing text format options
+///
+function fnRenderRowDetailTable(idElement) {
+    $(idElement + ' tbody').empty();
+
+    // loop through the array and add new rows to the table
+    dataDetail.forEach(function(data) {
         var newRow = '' +
             '<tr id="seq' + data.seq + '" data-seq="' + data.seq + '">' +
-                '<td>' +data.seq +
+                '<td>' +
                     '<label><input type="radio" name="alignment' + data.seq + '" value="0" ' + (data.alignment === '0' ? 'checked' : '') + '>Left</label>' +
                     '<label><input type="radio" name="alignment' + data.seq + '" value="1" ' + (data.alignment === '1' ? 'checked' : '') + '>Center</label>' +
-                    // '<label><input type="radio" name="alignment' + data.seq + '" value="2" ' + (data.alignment === '2' ? 'checked' : '') + '>Right</label>' +
+                    '<label><input type="radio" name="alignment' + data.seq + '" value="2" ' + (data.alignment === '2' ? 'checked' : '') + '>Right</label>' +
                 '</td>' +
                 '<td>' +
                     '<select name="highlight' + data.seq + '">' +
@@ -967,43 +348,66 @@ function fnRenderRowDetailTable(dataArray) {
                 '</td>' +
             '</tr>';
 
-        $('#tblPreview tbody').append(newRow);
+        $(idElement + ' tbody').append(newRow);
+    });
+}
+
+///
+/// fnRenderPreviewDetail : create a <pre> tag for the preview
+///
+function fnRenderPreviewDetail(idElement) {
+    var previewDiv = $(idElement);
+    previewDiv.empty();
+
+    dataDetail.forEach(function(data) {
+        var preElement = $('<pre>').text(data.buffer || ' ');
+
+        switch (data.highlight) {
+            case '0':
+                preElement.addClass('hl-normal');
+                break;
+            case '1':
+                preElement.addClass('hl-bold');
+                break;
+            case '2':
+                preElement.addClass('hl-double-h');
+                break;
+            case '3':
+                preElement.addClass('hl-double-w');
+                break;
+            case '4':
+                preElement.addClass('hl-double-wh');
+                break;
+            default:
+                break;
+        }
+
+        previewDiv.append(preElement);
     });
 }
 
 // dang tam ko can
-function getDataAllTableValues() {
+function fnGetDataAllTableValues(idElement) {
     var tableValues = [];
 
     // Lặp qua từng hàng (row) trong phần tbody của bảng
-    $('#tblPreview tbody tr').each(function(index, row) {
+    $(idElement + ' tbody tr').each(function(index, row) {
         var rowData = {};
 
-        // Lấy giá trị của thuộc tính data-seq từ thẻ <tr>
         rowData.seq = $(row).data('seq');
-
-        // Lấy giá trị của input radio alignment trong hàng hiện tại
         rowData.alignment = $(row).find('input[name^="alignment"]:checked').val();
-
-        // Lấy giá trị của select highlight trong hàng hiện tại
         rowData.highlight = $(row).find('select[name^="highlight"]').val();
-
-        // Lấy giá trị của select etc trong hàng hiện tại
         rowData.etc = $(row).find('select[name^="etc"]').val();
-
-        // Lấy giá trị của select ejs trong hàng hiện tại
         rowData.ejs = $(row).find('select[name^="ejs"]').val();
 
-        // Đưa object rowData vào mảng tableValues
         tableValues.push(rowData);
     });
 
-    // Console log mảng tableValues
-    console.log(tableValues);
+    return tableValues;
 }
 
 ///
-/// Hàm lấy vị trí con trỏ trong textarea
+/// fnGetCaretPosition : function to get cursor position
 ///
 function fnGetCaretPosition(id) {
     var textarea = $(id);
@@ -1014,25 +418,23 @@ function fnGetCaretPosition(id) {
 }
 
 ///
-/// fnAutoNewline
+/// fnAutoNewline : automatically wrap text when limit is reached
 ///
-function fnAutoNewlines(id) {
-    var textarea = $(id);
+function fnAutoNewlines(idElement) {
+    var textarea = $(idElement);
     var text = textarea.val();
+
     var startPos = textarea[0].selectionStart;
     var endPos = textarea[0].selectionEnd;
 
-    // Tính toán dòng hiện tại
-    editingInfo.previousLine = fnGetCaretPosition(id);
-
-    var maxLength = 40;
+    var maxLength = sizePerLine;
     var lines = text.split('\n');
     for (var i = 0; i < lines.length; i++) {
-
-        //maxLength = i === 1 || i === 4 ? 20 : 40; //hightline
-
         var line = lines[i];
-        // Tự động xuống dòng sau khi đạt đến giới hạn
+        var cutTextSize = fnCutTextSize(line).text;
+        maxLength = cutTextSize.length;
+
+        // automatically breaks the line after the limit is reached
         if (line.length > maxLength) {
             var spacePos = line.lastIndexOf(' ', maxLength);
             if (spacePos !== -1) {
@@ -1044,84 +446,168 @@ function fnAutoNewlines(id) {
             }
         }
     }
+
     printLines = lines;
 
     var updatedText = lines.join('\n');
     textarea.val(updatedText);
+    textarea.css('height', 'auto').height(textarea[0].scrollHeight);
 
-    // Khôi phục vị trí con trỏ
+    // restore cursor position
     textarea[0].setSelectionRange(startPos, endPos);
 
-    // Tính toán dòng hiện tại sau khi cập nhật
-    editingInfo.currentLine = fnGetCaretPosition(id);
+    // set current line after update
+    editingInfo.currentLine = fnGetCaretPosition(idElement);
 }
 
 ///
-/// fnGetEditingInfo
+/// fnSetEditingInfo : check whether lines are added or subtracted and do the work accordingly
 ///
-function fnGetEditingInfo(id) {
-    var textarea = $(id);
+function fnSetEditingInfo(idElement) {
+    var textarea = $(idElement);
     var text = textarea.val();
-    //var currentLine = fnGetCaretPosition(id);
+    var currentLine = fnGetCaretPosition(idElement);
 
     var rowCount = text.split('\n').length;
     var addedRows = rowCount - editingInfo.rowCount;
 
-    if (addedRows === 0) {
-        fnUpdRowsTable();
-    }
-
+    // perform extra data when adding rows
     if (addedRows > 0) {
-        fnAddRowsTable(addedRows);
+        var preLine = editingInfo.previousLine;
+
+        for (var i = 0; i < addedRows; i++) {
+            var start = preLine;
+            preLine += 1;
+            var seq = ('00' + preLine).slice(-3);
+            var data = {
+                seq: seq,
+                textOrigin: '',
+                buffer: ' ',
+                alignment: '0',
+                highlight: '0',
+                etc: '0',
+                ejs: '0'
+            }
+            dataDetail.splice(start, 0, data);
+        }
     }
 
+    // perform data deletion when deleting lines
     if (addedRows < 0) {
-        fnDelRowsTable(addedRows);
+        var curLine = editingInfo.currentLine;
+
+        var start = curLine;
+        var deleteCount = Math.abs(addedRows);
+
+        dataDetail.splice(start, deleteCount);
     }
 
-    //editingInfo.previousLine = editingInfo.currentLine,
-    //editingInfo.currentLine = currentLine,
-    editingInfo.rowCount = rowCount
-}
+    // after adding or deleting lines, the array needs to be reset
+    fnUpdateDataDetail();
 
-function fnUpdRowsTable() {
-    console.log(editingInfo.currentLine);
-}
-
-///
-/// fnAddRowsTable
-///
-function fnAddRowsTable(addedRows) {
-    //debugger
-    console.log(addedRows, 'add rows table');
-
-    var preLine = editingInfo.previousLine;
-
-    if (addedRows > 1) {
-        preLine--;
-    }
-
-    var curLine = preLine < 1 ? 1 : preLine;
-    var printLine = '';
-
-    for (let i = 0; i < addedRows; i++) {
-        console.log('add', preLine++);
-    }
-
-
+    editingInfo.previousLine = fnGetCaretPosition(idElement);
+    editingInfo.rowCount = rowCount;
 }
 
 ///
-/// fnDelRowsTable
+/// fnUpdateDataDetail : update sequence and text information
 ///
-function fnDelRowsTable(addedRows) {
-    console.log(addedRows, 'del rows table');
+function fnUpdateDataDetail() {
+    for (var i = 0; i < dataDetail.length; i++) {
+        var data = dataDetail[i];
+        var printLine = printLines[i];
 
-    var curLine = editingInfo.currentLine;
+        var buffer = fnFormatText(printLine, data.alignment, data.highlight, sizePerLine);
 
-    for (let i = addedRows; i < 0; i++) {
-        console.log('del', ++curLine);
+        data.seq = ('00' + (i + 1)).slice(-3);
+        data.textOrigin = buffer.textOrigin;
+        data.buffer = buffer.text;
     }
+}
+
+///
+/// fnCutTextSize : perform string slicing
+/// params: <txtInput> : text on line
+/// return {
+///    text: result, : text after cutting
+///    length: count : used for formatting in function fnFormatText
+/// };
+function fnCutTextSize(txtInput) {
+    var result = '';
+    var count = 0;
+    var array = txtInput.split('');
+
+    // split text
+    for (let i = 0; i < array.length; i++) {
+        var char = array[i];
+        // used for the English alphabet = 1; used for Korean text length = 3
+        var length = new Blob([char]).size;
+        count += (length > 2 ? 2 : 1);
+        if (count > sizePerLine) {
+            break;
+        }
+        result += char;
+    }
+
+    return { text: result, length: count};
+}
+
+///
+/// fnFormatText : perform string slicing and text formatting according to options
+/// params:
+///    <txtInput>  : text on line
+///    <alignment> : values('0', '1', '2')
+///    <highlight> : values('0', '1', '2', '3', '4')
+///    <width>     : maximum size per line
+/// return {
+///    text: result,          : text is formatted according to alignment and alignment
+///    textOrigin: textOrigin : original text
+/// }
+///
+function fnFormatText(txtInput, alignment = '0', highlight = '0', width = 40) {
+    var array = txtInput.split('');
+
+    // DoubleW
+    if (highlight === '3') {
+        width = Math.floor(width / 2);
+    }
+
+    // DoubleWH
+    if (highlight === '4') {
+        width = Math.floor(width / 2);
+    }
+
+    var cutTextSize = fnCutTextSize(txtInput);
+    var textOrigin = cutTextSize.text;
+    var result = cutTextSize.text;
+    var count = cutTextSize.length;
+
+    // Calculate the length of the missing space
+    var widthSpace = width - count < 0 ? 0 : width - count;
+
+    // Left alignment
+    if (alignment === '0') {
+        for (var i = 0; i < widthSpace; i++) {
+            result = result + ' ';
+        }
+    }
+
+    // Center alignment
+    if (alignment === '1') {
+        for (var i = 0; i < Math.floor(widthSpace / 2); i++) {
+            result = ' ' + result + ' ';
+        }
+        result += widthSpace % 2 === 0 ? '' : ' ';
+    }
+
+    // Right alignment
+    if (alignment === '2') {
+        for (var i = 0; i < widthSpace; i++) {
+            result = ' ' + result;
+        }
+    }
+
+    return { text: result, textOrigin: textOrigin };
 }
 
 </script>
