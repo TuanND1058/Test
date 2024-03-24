@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Textarea Functions</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js" integrity="sha512-YHQNqPhxuCY2ddskIbDlZfwY6Vx3L3w9WRbyJCY81xpqLmrM6rL2+LocBgeVHwGY9SXYfQWJ+lcEWx1fKS2s8A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
+</head>
+<style>
+    body{
+        font-size: 12px;
+    }
+.non-resize-textarea {
+    overflow: hidden; /* Ngăn chặn hiển thị thanh cuộn */
+    resize: none;
+    line-height: 1.642;
+    height: 33px;
+}
+.preview {
+    text-align: center;
+    border: 1px solid gray;
+    padding: 5px 0;
+}
+pre {
+    padding: 0;
+    margin: 0;
+    font-size: 12px;
+    border: transparent;
+    line-height: 1.1;
+}
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+label {
+    margin: 0;
+}
+</style>
+<body>
+
+<br>
+
+<div class="container">
+<div class="row">
+    <div class="col-md-8" style="background-color: #dddddd;">
+        <div class="row">
+            <div class="col-md-5">
+                <div style="margin-bottom: 20px;">Print Line</div>
+                <textarea class="non-resize-textarea" id="txtPrintLine" rows="1" cols="47"></textarea>
+            </div>
+            <div class="col-md-7" style="background-color: #ffc9c9;">
+                <table id="tblPreview">
+                    <thead>
+                        <tr>
+                            <th>
+                                Alignment
+                                <br/>
+                                <label><input type="radio" name="alignmentAll" value="0">Left</label>
+                                <label><input type="radio" name="alignmentAll" value="1">Center</label>
+                                <label><input type="radio" name="alignmentAll" value="2">Right</label>
+                            </th>
+                            <th>
+                                Highlight
+                                <br>
+                                <select name="highlightAll" id="highlightAll">
+                                    <option value="">---</option>
+                                    <option value="0">Normal</option>
+                                    <option value="1">Bold</option>
+                                    <option value="2">DoubleH</option>
+                                    <option value="3">DoubleW</option>
+                                    <option value="4">DoubleWH</option>
+                                </select>
+                            </th>
+                            <th>
+                                Etc
+                                <br>
+                                <select name="etcAll" id="etcAll">
+                                    <option value="">---</option>
+                                    <option value="0">Normal</option>
+                                    <option value="1">Gift Code</option>
+                                    <option value="2">Barcode</option>
+                                </select>
+                            </th>
+                            <th>
+                                EJS
+                                <br>
+                                <select name="ejsAll" id="ejsAll">
+                                    <option value="">---</option>
+                                    <option value="0">Normal</option>
+                                    <option value="1">None</option>
+                                    <option value="2">EJS only</option>
+                                </select>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr id="seq001" data-seq="001">
+                            <td>
+                                <label><input type="radio" name="alignment001" value="0" checked>Left</label>
+                                <label><input type="radio" name="alignment001" value="1">Center</label>
+                                <label><input type="radio" name="alignment001" value="2">Right</label>
+                            </td>
+                            <td>
+                                <select name="highlight001" id="highlight001">
+                                    <option value="0" selected>Normal</option>
+                                    <option value="1">Bold</option>
+                                    <option value="2">DoubleH</option>
+                                    <option value="3">DoubleW</option>
+                                    <option value="4">DoubleWH</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select name="etc001" id="etc001">
+                                    <option value="0" selected>Normal</option>
+                                    <option value="1">Gift Code</option>
+                                    <option value="2">Barcode</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select name="ejs001" id="ejs001">
+                                    <option value="0" selected>Normal</option>
+                                    <option value="1">None</option>
+                                    <option value="2">EJS only</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr id="seq002" data-seq="002">
+                            <td>
+                                <label><input type="radio" name="alignment002" value="0" checked>Left</label>
+                                <label><input type="radio" name="alignment002" value="1">Center</label>
+                                <label><input type="radio" name="alignment002" value="2">Right</label>
+                            </td>
+                            <td>
+                                <select name="highlight002" id="highlight002">
+                                    <option value="0" selected>Normal</option>
+                                    <option value="1">Bold</option>
+                                    <option value="2">DoubleH</option>
+                                    <option value="3">DoubleW</option>
+                                    <option value="4">DoubleWH</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select name="etc002" id="etc002">
+                                    <option value="0" selected>Normal</option>
+                                    <option value="1">Gift Code</option>
+                                    <option value="2">Barcode</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select name="ejs002" id="ejs002">
+                                    <option value="0" selected>Normal</option>
+                                    <option value="1">None</option>
+                                    <option value="2">EJS only</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- <textarea class="" id="txtPrintLine2" rows="5" cols="50"></textarea> -->
+    </div>
+    <div id="divPreview" class="col-md-4 preview">
+        <pre>태그의 각 줄 미리보기</pre>
+        <pre>태그의 각 줄 미리보기</pre>
+    </div>
+</div>
+</div>
+
+<br>
+Lorem ipsum dolor sit, amet consectetur adipisicing elit. Consequuntur illum repellat accusantium asperiores atque. Exercitationem perferendis aliquam at quo aliquid omnis nesciunt voluptatem eos numquam cumque? Culpa placeat dignissimos dicta.
+
+<script>
+
+var printLines = [];
+var editingInfo = {
+        previousLine: 1,
+        currentLine: 1,
+        rowCount: 1
+    };
+
+var dataDetail = [
+    {
+        seq: 1,
+        buffer: '',
+        alignment: '0',
+        highlight: '0',
+        etc: '0',
+        ejs: '0'
+    },
+    // {
+    //     seq: '002',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '003',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '004',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '005',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '006',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '007',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '008',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '009',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '010',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '011',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '012',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '013',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '014',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '015',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '016',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '017',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '018',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '019',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '020',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '021',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '022',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '023',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '024',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '025',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '026',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '027',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '028',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '029',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '030',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '031',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '032',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '033',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '034',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '035',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '036',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '037',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '038',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '039',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '040',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '040',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '042',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '043',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '044',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '045',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '046',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '047',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '048',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '049',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '050',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '051',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '052',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '053',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '054',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '055',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '056',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '057',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '058',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '059',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '060',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '061',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '062',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '063',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '064',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '065',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '066',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '067',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '068',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '069',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '070',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '071',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '072',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '073',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '074',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '075',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '076',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '077',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '078',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '079',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '080',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '081',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '082',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '083',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '084',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '085',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '086',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '087',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '088',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // },
+    // {
+    //     seq: '089',
+    //     buffer: '',
+    //     alignment: '1',
+    //     highlight: '1',
+    //     etc: '1',
+    //     ejs: '1'
+    // }
+];
+
+$(document).ready(function(){
+
+    // Gọi hàm updateTable để cập nhật bảng với mảng dữ liệu
+    fnRenderRowDetailTable(dataDetail);
+
+    $('#txtPrintLine2').on('input', function() {
+        fnAutoNewlines('#txtPrintLine2');
+    });
+
+    $('#txtPrintLine').on('input', function(event) {
+        console.log('--------------------------');
+        fnAutoNewlines('#txtPrintLine');
+        $(this).css('height', 'auto').height(this.scrollHeight);
+        fnGetEditingInfo('#txtPrintLine');
+    });
+
+    $('#txtPrintLine').on('click', function() {
+        var currentLine = fnGetCaretPosition('#txtPrintLine');
+        editingInfo.previousLine = editingInfo.currentLine;
+        editingInfo.currentLine = currentLine;
+    });
+
+});
+
+///
+/// fnUpdateTable
+///
+function fnRenderRowDetailTable(dataArray) {
+    // Xóa tất cả các hàng hiện có trong phần tbody của bảng
+    $('#tblPreview tbody').empty();
+
+    // Lặp qua mảng dataArray và thêm các hàng mới vào bảng
+    dataArray.forEach(function(data) {
+        var newRow = '' +
+            '<tr id="seq' + data.seq + '" data-seq="' + data.seq + '">' +
+                '<td>' +data.seq +
+                    '<label><input type="radio" name="alignment' + data.seq + '" value="0" ' + (data.alignment === '0' ? 'checked' : '') + '>Left</label>' +
+                    '<label><input type="radio" name="alignment' + data.seq + '" value="1" ' + (data.alignment === '1' ? 'checked' : '') + '>Center</label>' +
+                    // '<label><input type="radio" name="alignment' + data.seq + '" value="2" ' + (data.alignment === '2' ? 'checked' : '') + '>Right</label>' +
+                '</td>' +
+                '<td>' +
+                    '<select name="highlight' + data.seq + '">' +
+                        '<option value="0" ' + (data.highlight === '0' ? 'selected' : '') + '>Normal</option>' +
+                        '<option value="1" ' + (data.highlight === '1' ? 'selected' : '') + '>Bold</option>' +
+                        '<option value="2" ' + (data.highlight === '2' ? 'selected' : '') + '>DoubleH</option>' +
+                        '<option value="3" ' + (data.highlight === '3' ? 'selected' : '') + '>DoubleW</option>' +
+                        '<option value="4" ' + (data.highlight === '4' ? 'selected' : '') + '>DoubleWH</option>' +
+                    '</select>' +
+                '</td>' +
+                '<td>' +
+                    '<select name="etc' + data.seq + '">' +
+                        '<option value="0" ' + (data.etc === '0' ? 'selected' : '') + '>Normal</option>' +
+                        '<option value="1" ' + (data.etc === '1' ? 'selected' : '') + '>Gift Code</option>' +
+                        '<option value="2" ' + (data.etc === '2' ? 'selected' : '') + '>Barcode</option>' +
+                    '</select>' +
+                '</td>' +
+                '<td>' +
+                    '<select name="ejs' + data.seq + '">' +
+                        '<option value="0" ' + (data.ejs === '0' ? 'selected' : '') + '>Normal</option>' +
+                        '<option value="1" ' + (data.ejs === '1' ? 'selected' : '') + '>None</option>' +
+                        '<option value="2" ' + (data.ejs === '2' ? 'selected' : '') + '>EJS only</option>' +
+                    '</select>' +
+                '</td>' +
+            '</tr>';
+
+        $('#tblPreview tbody').append(newRow);
+    });
+}
+
+// dang tam ko can
+function getDataAllTableValues() {
+    var tableValues = [];
+
+    // Lặp qua từng hàng (row) trong phần tbody của bảng
+    $('#tblPreview tbody tr').each(function(index, row) {
+        var rowData = {};
+
+        // Lấy giá trị của thuộc tính data-seq từ thẻ <tr>
+        rowData.seq = $(row).data('seq');
+
+        // Lấy giá trị của input radio alignment trong hàng hiện tại
+        rowData.alignment = $(row).find('input[name^="alignment"]:checked').val();
+
+        // Lấy giá trị của select highlight trong hàng hiện tại
+        rowData.highlight = $(row).find('select[name^="highlight"]').val();
+
+        // Lấy giá trị của select etc trong hàng hiện tại
+        rowData.etc = $(row).find('select[name^="etc"]').val();
+
+        // Lấy giá trị của select ejs trong hàng hiện tại
+        rowData.ejs = $(row).find('select[name^="ejs"]').val();
+
+        // Đưa object rowData vào mảng tableValues
+        tableValues.push(rowData);
+    });
+
+    // Console log mảng tableValues
+    console.log(tableValues);
+}
+
+///
+/// Hàm lấy vị trí con trỏ trong textarea
+///
+function fnGetCaretPosition(id) {
+    var textarea = $(id);
+    var text = textarea.val();
+    var startPos = textarea[0].selectionStart;
+    var currentLine = text.substring(0, startPos).split('\n').length;
+    return currentLine;
+}
+
+///
+/// fnAutoNewline
+///
+function fnAutoNewlines(id) {
+    var textarea = $(id);
+    var text = textarea.val();
+    var startPos = textarea[0].selectionStart;
+    var endPos = textarea[0].selectionEnd;
+
+    // Tính toán dòng hiện tại
+    editingInfo.previousLine = fnGetCaretPosition(id);
+
+    var maxLength = 40;
+    var lines = text.split('\n');
+    for (var i = 0; i < lines.length; i++) {
+
+        //maxLength = i === 1 || i === 4 ? 20 : 40; //hightline
+
+        var line = lines[i];
+        // Tự động xuống dòng sau khi đạt đến giới hạn
+        if (line.length > maxLength) {
+            var spacePos = line.lastIndexOf(' ', maxLength);
+            if (spacePos !== -1) {
+                lines[i] = line.substring(0, spacePos);
+                lines.splice(i + 1, 0, line.substring(spacePos + 1));
+            } else {
+                lines[i] = line.substring(0, maxLength);
+                lines.splice(i + 1, 0, line.substring(maxLength));
+            }
+        }
+    }
+    printLines = lines;
+
+    var updatedText = lines.join('\n');
+    textarea.val(updatedText);
+
+    // Khôi phục vị trí con trỏ
+    textarea[0].setSelectionRange(startPos, endPos);
+
+    // Tính toán dòng hiện tại sau khi cập nhật
+    editingInfo.currentLine = fnGetCaretPosition(id);
+}
+
+///
+/// fnGetEditingInfo
+///
+function fnGetEditingInfo(id) {
+    var textarea = $(id);
+    var text = textarea.val();
+    //var currentLine = fnGetCaretPosition(id);
+
+    var rowCount = text.split('\n').length;
+    var addedRows = rowCount - editingInfo.rowCount;
+
+    if (addedRows === 0) {
+        fnUpdRowsTable();
+    }
+
+    if (addedRows > 0) {
+        fnAddRowsTable(addedRows);
+    }
+
+    if (addedRows < 0) {
+        fnDelRowsTable(addedRows);
+    }
+
+    //editingInfo.previousLine = editingInfo.currentLine,
+    //editingInfo.currentLine = currentLine,
+    editingInfo.rowCount = rowCount
+}
+
+function fnUpdRowsTable() {
+    console.log(editingInfo.currentLine);
+}
+
+///
+/// fnAddRowsTable
+///
+function fnAddRowsTable(addedRows) {
+    //debugger
+    console.log(addedRows, 'add rows table');
+
+    var preLine = editingInfo.previousLine;
+
+    if (addedRows > 1) {
+        preLine--;
+    }
+
+    var curLine = preLine < 1 ? 1 : preLine;
+    var printLine = '';
+
+    for (let i = 0; i < addedRows; i++) {
+        console.log('add', preLine++);
+    }
+
+
+}
+
+///
+/// fnDelRowsTable
+///
+function fnDelRowsTable(addedRows) {
+    console.log(addedRows, 'del rows table');
+
+    var curLine = editingInfo.currentLine;
+
+    for (let i = addedRows; i < 0; i++) {
+        console.log('del', ++curLine);
+    }
+}
+
+</script>
+
+</body>
+</html>
