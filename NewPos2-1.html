@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Textarea Functions</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js" integrity="sha512-YHQNqPhxuCY2ddskIbDlZfwY6Vx3L3w9WRbyJCY81xpqLmrM6rL2+LocBgeVHwGY9SXYfQWJ+lcEWx1fKS2s8A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
+</head>
+<style>
+body{
+    font-size: 12px;
+}
+
+.non-resize-textarea {
+    overflow: hidden;
+    resize: none;
+    line-height: 1.939;
+    padding: 0 5px;
+    /* height: 33px; */
+    margin-bottom: -5px;
+    border: none;
+}
+
+.preview {
+    position: sticky;
+    top: 15px;
+    max-height: 500px;
+    overflow-y: auto;
+    text-align: center;
+    border: 1px solid gray;
+    padding: 5px 10px;
+}
+
+textarea {
+    font-family: 'Courier New', Courier, monospace;
+}
+
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 0 5px;
+}
+
+pre {
+    font-family: 'Courier New', Courier, monospace;
+    display: block;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    border: transparent;
+    background-color: transparent;
+    line-height: 1.1;
+    overflow: hidden;
+    width: 100%;
+}
+
+.hl-normal {
+
+}
+
+.hl-bold {
+    font-weight: bold;
+}
+
+.hl-double-w {
+    transform: scaleX(2);
+    transform-origin: left;
+    width: 50%;
+}
+
+.hl-double-h {
+    transform: scaleY(2);
+    transform-origin: top;
+    margin-bottom: 12px;
+}
+
+.hl-double-wh {
+    transform: scale(2);
+    transform-origin: top left;
+    width: 50%;
+    margin-bottom: 12px;
+}
+
+label {
+    margin: 0;
+}
+
+label:has(input[type="radio"]:disabled) {
+    color: #797979;
+}
+</style>
+<body>
+
+<br>
+
+<div class="container">
+<div class="row">
+    <div class="col-md-8" style="background-color: #dddddd; margin-bottom: 50px;">
+        <div class="row">
+            <!-- <div class="col-md-5">
+                <div style="margin-bottom: 23px;">Print Line</div>
+                <textarea class="non-resize-textarea" id="txtInputText" rows="1" cols="41"></textarea>
+            </div> -->
+            <div class="col-md-12" style="background-color: #ffc9c9;">
+                <table id="tblOptions">
+                    <thead>
+                        <tr>
+                            <th>
+                                Print line
+                            </th>
+                            <th>
+                                Alignment
+                                <br/>
+                                <label style="display: none;"><input type="radio" name="alignmentAll" value="" checked></label>
+                                <label><input type="radio" name="alignmentAll" value="0">Left</label>
+                                <label><input type="radio" name="alignmentAll" value="1">Center</label>
+                                <label><input type="radio" name="alignmentAll" value="2">Right</label>
+                            </th>
+                            <th>
+                                Highlight
+                                <br>
+                                <select name="highlightAll" id="highlightAll">
+                                    <option value="">---</option>
+                                    <option value="0">Normal</option>
+                                    <option value="1">Bold</option>
+                                    <option value="2">DoubleW</option>
+                                    <option value="3">DoubleH</option>
+                                    <option value="4">DoubleWH</option>
+                                </select>
+                            </th>
+                            <th>
+                                Etc
+                                <br>
+                                <select name="etcAll" id="etcAll">
+                                    <option value="">---</option>
+                                    <option value="0">Normal</option>
+                                    <option value="1">Gift Code</option>
+                                    <option value="2">Barcode</option>
+                                </select>
+                            </th>
+                            <th>
+                                EJS
+                                <br>
+                                <select name="ejsAll" id="ejsAll">
+                                    <option value="">---</option>
+                                    <option value="0">Normal</option>
+                                    <option value="1">None</option>
+                                    <option value="2">EJS only</option>
+                                </select>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr id="txtInputTextMain">
+                            <td rowspan="3" style="padding: 0;">
+                                <textarea class="non-resize-textarea" id="txtInputText" rows="1" cols="41"></textarea>
+                            </td>
+                        </tr>
+                        <tr id="seq001" data-seq="001">
+                            <td>
+                                <label><input type="radio" name="alignment001" value="0">Left</label>
+                                <label><input type="radio" name="alignment001" value="1">Center</label>
+                                <label><input type="radio" name="alignment001" value="2">Right</label>
+                            </td>
+                            <td>
+                                <select name="highlight001" id="highlight001">
+                                    <option value="0" selected>Normal</option>
+                                    <option value="1">Bold</option>
+                                    <option value="2">DoubleW</option>
+                                    <option value="3">DoubleH</option>
+                                    <option value="4">DoubleWH</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select name="etc001" id="etc001">
+                                    <option value="0" selected>Normal</option>
+                                    <option value="1">Gift Code</option>
+                                    <option value="2">Barcode</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select name="ejs001" id="ejs001">
+                                    <option value="0" selected>Normal</option>
+                                    <option value="1">None</option>
+                                    <option value="2">EJS only</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr id="seq002" data-seq="002">
+                            <td>
+                                <label><input type="radio" name="alignment002" value="0" checked>Left</label>
+                                <label><input type="radio" name="alignment002" value="1">Center</label>
+                                <label><input type="radio" name="alignment002" value="2">Right</label>
+                            </td>
+                            <td>
+                                <select name="highlight002" id="highlight002">
+                                    <option value="0" selected>Normal</option>
+                                    <option value="1">Bold</option>
+                                    <option value="2">DoubleW</option>
+                                    <option value="3">DoubleH</option>
+                                    <option value="4">DoubleWH</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select name="etc002" id="etc002">
+                                    <option value="0" selected>Normal</option>
+                                    <option value="1">Gift Code</option>
+                                    <option value="2">Barcode</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select name="ejs002" id="ejs002">
+                                    <option value="0" selected>Normal</option>
+                                    <option value="1">None</option>
+                                    <option value="2">EJS only</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div id="divPreview" class="col-md-4 preview">
+        <pre>태그의 각 줄 미리보기</pre>
+        <pre>태그의 각 줄 미리보기</pre>
+    </div>
+</div>
+</div>
+
+<script>
+
+// initialize common variable
+var barcode = '[barcode]';
+var sizePerLine = 40;
+var printLines = [];
+var optionAll = {
+    alignment: '',
+    highlight: '',
+    etc: '',
+    ejs: ''
+};
+var highlightClasses = {
+    '0': 'hl-normal',
+    '1': 'hl-bold',
+    '2': 'hl-double-w',
+    '3': 'hl-double-h',
+    '4': 'hl-double-wh'
+};
+var editingInfo = {
+    previousLine: 1,
+    currentLine: 1,
+    rowCount: 1
+};
+var dataDetail = [
+    {
+        seq: '001',
+        textOrigin: '',
+        buffer: ' ',
+        alignment: '0',
+        highlight: '0',
+        etc: '0',
+        ejs: '0'
+    }
+];
+
+$(document).ready(function(){
+
+    // call the function to update the table with the initial preview
+    fnRenderRowHeadTable('#tblOptions thead');
+    fnRenderRowBodyTable('#tblOptions tbody');
+    fnRenderPreviewDetail('#divPreview');
+
+    $('#txtInputText').on('input', function() {
+        fnAutoNewlines('#txtInputText');
+
+        fnSetEditingInfo('#txtInputText');
+
+        fnRenderRowBodyTable('#tblOptions tbody');
+        fnRenderPreviewDetail('#divPreview');
+
+        console.log("dataDetail" , dataDetail);
+    });
+
+    $('#tblOptions thead').on('change', 'input[type="radio"], select', function() {
+        var row = $(this).closest('tr');
+
+        fnUpdateAllOptionsDetail(row);
+
+        fnRenderRowBodyTable('#tblOptions tbody');
+        fnRenderPreviewDetail('#divPreview');
+
+        console.log("dataDetail" , dataDetail);
+    });
+
+    $('#tblOptions tbody').on('change', 'input[type="radio"], select', function() {
+        var row = $(this).closest('tr');
+
+        fnUpdateOptionsDetail(row);
+
+        fnRenderRowHeadTable('#tblOptions thead');
+        fnRenderRowBodyTable('#tblOptions tbody');
+        fnRenderPreviewDetail('#divPreview');
+
+        console.log("dataDetail" , dataDetail);
+    });
+
+    $('#txtInputText').on('click', function() {
+        var currentLine = fnGetCaretPosition('#txtInputText');
+        editingInfo.previousLine = currentLine;
+        editingInfo.currentLine = currentLine;
+    });
+
+});
+
+///
+/// fnUpdateAllOptionsDetail
+///
+function fnUpdateAllOptionsDetail(row) {
+    // Get elements for row detail only once
+    var alignmentAllElement = row.find('input[type="radio"]');
+    var highlightAllElement = row.find('select').eq(0);
+    var etcAllElement = row.find('select').eq(1);
+    var ejsAllElement = row.find('select').eq(2);
+
+    // Get values of elements
+    var alignmentAll = alignmentAllElement.filter(':checked').val();
+    var highlightAll = highlightAllElement.val();
+    var etcAll = etcAllElement.val();
+    var ejsAll = ejsAllElement.val();
+
+    var statusAlignment = false;
+    var statusHighlight = false;
+    var statusEtc = false;
+    var statusEjs = false;
+
+    optionAll.alignment = alignmentAll;
+    optionAll.highlight = highlightAll;
+    optionAll.etc = etcAll;
+    optionAll.ejs = ejsAll;
+
+    dataDetail.forEach(function(data) {
+        var alignment = alignmentAll || data.alignment;
+        var highlight = highlightAll || data.highlight;
+        var etc = etcAll || data.etc;
+
+        if (data.etc !== '0') {
+            alignment = '1';
+            highlight = '0';
+        }
+
+        var textFormat = fnFormatText(data.textOrigin, alignment, highlight, sizePerLine);
+        data.buffer = etcAll === '2' || etc === '2' ? barcode : textFormat.text;
+        data.alignment = alignment;
+        data.highlight = highlight;
+        data.etc = etc;
+        data.ejs = ejsAll || data.ejs;
+    });
+}
+
+///
+/// fnUpdateOptionsDetail : updated text formatting options in data array
+///
+function fnUpdateOptionsDetail(row) {
+    // Get elements for row detail only once
+    var alignmentElement = row.find('input[type="radio"]');
+    var highlightElement = row.find('select').eq(0);
+    var etcElement = row.find('select').eq(1);
+    var ejsElement = row.find('select').eq(2);
+
+    // Get values of elements
+    var alignment = alignmentElement.filter(':checked').val();
+    var highlight = highlightElement.val();
+    var etc = etcElement.val();
+    var ejs = ejsElement.val();
+
+    // Reset options in optionAll if necessary
+    if (optionAll.alignment && optionAll.alignment !== alignment) {
+        optionAll.alignment = '';
+    }
+    if (optionAll.highlight && optionAll.highlight !== highlight) {
+        optionAll.highlight = '';
+    }
+    if (optionAll.etc && optionAll.etc !== etc) {
+        optionAll.etc = '';
+    }
+    if (optionAll.ejs && optionAll.ejs !== ejs) {
+        optionAll.ejs = '';
+    }
+
+    var seq = row.data("seq");
+    var data = dataDetail.find(item => item.seq === seq);
+
+    if (etc === '1' || etc === '2') {
+        alignment = '1';
+        highlight = '0';
+    }
+
+    // Update dataDetail array
+    var textFormat = fnFormatText(data.textOrigin, alignment, highlight, sizePerLine);
+    data.buffer = etc === '2' ? barcode : textFormat.text;
+    data.alignment = alignment || '0';
+    data.highlight = highlight || '0';
+    data.etc = etc || '0';
+    data.ejs = ejs || '0';
+}
+
+///
+/// fnRenderRowHeadTable : create a table containing text format options
+///
+function fnRenderRowHeadTable(idElement) {
+    var disabled = (optionAll.etc && optionAll.etc !== '0');
+    $('input[name="alignmentAll"]').prop('checked', false).prop('disabled', disabled);
+    $('input[name="alignmentAll"][value="' + optionAll.alignment + '"]').prop('checked', true);
+    $('#highlightAll').val(optionAll.highlight).prop('disabled', disabled);
+    $('#etcAll').val(optionAll.etc);
+    $('#ejsAll').val(optionAll.ejs);
+}
+
+///
+/// fnRenderRowTable : create a table containing text format options
+///
+function fnRenderRowBodyTable(idElement) {
+    var container = $(idElement);
+    //container.empty();
+    $('#txtInputTextMain').siblings().remove();
+    $('#txtInputTextMain > td').attr('rowspan', editingInfo.rowCount + 1);
+
+    var htmlContent = '';
+
+    dataDetail.forEach(function(data) {
+        htmlContent +=
+        '<tr id="seq' + data.seq + '" data-seq="' + data.seq + '">' +
+            '<td>' +
+                '<label><input type="radio" name="alignment' + data.seq + '" value="0" ' + (data.alignment === '0' ? 'checked' : '') + ' ' + (data.etc !== '0' ? 'disabled' : '') + '>Left</label>' +
+                '<label><input type="radio" name="alignment' + data.seq + '" value="1" ' + (data.alignment === '1' ? 'checked' : '') + ' ' + (data.etc !== '0' ? 'disabled' : '') + '>Center</label>' +
+                '<label><input type="radio" name="alignment' + data.seq + '" value="2" ' + (data.alignment === '2' ? 'checked' : '') + ' ' + (data.etc !== '0' ? 'disabled' : '') + '>Right</label>' +
+            '</td>' +
+            '<td>' +
+                '<select name="highlight' + data.seq + '" ' + (data.etc !== '0' ? 'disabled' : '') + '>' +
+                    '<option value="0" ' + (data.highlight === '0' ? 'selected' : '') + '>Normal</option>' +
+                    '<option value="1" ' + (data.highlight === '1' ? 'selected' : '') + '>Bold</option>' +
+                    '<option value="2" ' + (data.highlight === '2' ? 'selected' : '') + '>DoubleW</option>' +
+                    '<option value="3" ' + (data.highlight === '3' ? 'selected' : '') + '>DoubleH</option>' +
+                    '<option value="4" ' + (data.highlight === '4' ? 'selected' : '') + '>DoubleWH</option>' +
+                '</select>' +
+            '</td>' +
+            '<td>' +
+                '<select name="etc' + data.seq + '">' +
+                    '<option value="0" ' + (data.etc === '0' ? 'selected' : '') + '>Normal</option>' +
+                    '<option value="1" ' + (data.etc === '1' ? 'selected' : '') + '>Gift Code</option>' +
+                    '<option value="2" ' + (data.etc === '2' ? 'selected' : '') + '>Barcode</option>' +
+                '</select>' +
+            '</td>' +
+            '<td>' +
+                '<select name="ejs' + data.seq + '">' +
+                    '<option value="0" ' + (data.ejs === '0' ? 'selected' : '') + '>Normal</option>' +
+                    '<option value="1" ' + (data.ejs === '1' ? 'selected' : '') + '>None</option>' +
+                    '<option value="2" ' + (data.ejs === '2' ? 'selected' : '') + '>EJS only</option>' +
+                '</select>' +
+            '</td>' +
+        '</tr>';
+    });
+
+    container.append(htmlContent);
+}
+
+///
+/// fnRenderPreviewDetail : create a <pre> tag for the preview
+///
+function fnRenderPreviewDetail(idElement) {
+    var previewDiv = $(idElement);
+    previewDiv.empty();
+
+    dataDetail.forEach(function(data) {
+        var preElement = $('<pre>').text(data.buffer || ' ');
+
+        if (highlightClasses[data.highlight]) {
+            preElement.addClass(highlightClasses[data.highlight]);
+        }
+
+        previewDiv.append(preElement);
+    });
+}
+
+///
+/// fnGetCaretPosition : function to get cursor position
+///
+function fnGetCaretPosition(id) {
+    var textarea = $(id);
+    var text = textarea.val();
+    var selectionPos = textarea[0].selectionStart;
+    var currentLine = text.substring(0, selectionPos).split('\n').length;
+    return currentLine;
+}
+
+///
+/// fnAutoNewline : automatically wrap text when limit is reached
+///
+function fnAutoNewlines(idElement) {
+    var textarea = $(idElement);
+    var text = textarea.val();
+    var selectionPos = textarea[0].selectionStart;
+    var maxLength = sizePerLine;
+    var lines = text.split('\n');
+
+    for (var i = 0; i < lines.length; i++) {
+        var line = lines[i];
+        var cutTextSize = fnCutTextSize(line).text;
+        maxLength = cutTextSize.length;
+
+        // automatically breaks the line after the limit is reached
+        if (line.length > maxLength) {
+            var spacePos = line.lastIndexOf(' ', maxLength);
+
+            if (spacePos !== -1) {
+                lines[i] = line.substring(0, spacePos);
+                lines.splice(i + 1, 0, line.substring(spacePos + 1));
+            } else {
+                lines[i] = line.substring(0, maxLength);
+                lines.splice(i + 1, 0, line.substring(maxLength));
+            }
+        }
+    }
+
+    printLines = lines;
+
+    var updatedText = lines.join('\n');
+    textarea.val(updatedText);
+    textarea.css('height', 'auto').height(textarea[0].scrollHeight);
+
+    // restore cursor position
+    textarea[0].setSelectionRange(selectionPos, selectionPos);
+
+    // set current line after update
+    editingInfo.currentLine = fnGetCaretPosition(idElement);
+}
+
+///
+/// fnSetEditingInfo : check whether lines are added or subtracted and do the work accordingly
+///
+function fnSetEditingInfo(idElement) {
+    var textarea = $(idElement);
+    var text = textarea.val();
+    var currentLine = fnGetCaretPosition(idElement);
+    var rowCount = text.split('\n').length;
+    var addedRows = rowCount - editingInfo.rowCount;
+
+    if (addedRows !== 0) {
+        if (addedRows > 0) {
+            fnAddRowsTable(addedRows);
+        } else {
+            fnDelRowsTable(addedRows);
+        }
+    }
+
+    fnUpdateDataDetail();
+
+    editingInfo.previousLine = currentLine;
+    editingInfo.rowCount = rowCount;
+}
+
+///
+/// fnAddRowsTable
+///
+function fnAddRowsTable(addedRows) {
+    var preLine = editingInfo.previousLine;
+    var newData = [];
+
+    for (var i = 0; i < addedRows; i++) {
+        var seq = ('00' + (++preLine)).slice(-3);
+        newData.push({
+            seq: seq,
+            textOrigin: '',
+            buffer: ' ',
+            alignment: optionAll.alignment || '0',
+            highlight: optionAll.highlight || '0',
+            etc: optionAll.etc || '0',
+            ejs: optionAll.ejs || '0'
+        });
+    }
+
+    if (addedRows > 0) {
+        dataDetail.splice(preLine - addedRows, 0, ...newData);
+    }
+    // if (addedRows > 0) {
+    //     // Calculate the index to insert the new data
+    //     var insertIndex = preLine - addedRows;
+    //     // Combine newData with dataDetail using concat
+    //     dataDetail = dataDetail.slice(0, insertIndex).concat(newData, dataDetail.slice(insertIndex));
+    // }
+}
+
+///
+/// fnDelRowsTable
+///
+function fnDelRowsTable(addedRows) {
+    var curLine = editingInfo.currentLine;
+
+    var start = curLine;
+    var deleteCount = Math.abs(addedRows);
+
+    dataDetail.splice(start, deleteCount);
+}
+
+///
+/// fnUpdateDataDetail : update sequence and text information
+///
+function fnUpdateDataDetail() {
+    var dataLength = dataDetail.length;
+    for (var i = 0; i < dataLength; i++) {
+        var data = dataDetail[i];
+        var printLine = printLines[i];
+
+        var buffer = fnFormatText(printLine, data.alignment, data.highlight, sizePerLine);
+
+        var seq = ('00' + (i + 1)).slice(-3);
+        var textOrigin = buffer.textOrigin;
+        var bufferText = (data.etc === '2') ? barcode : buffer.text;
+
+        Object.assign(data, { seq, textOrigin, buffer: bufferText });
+    }
+}
+
+///
+/// fnCutTextSize : perform string slicing
+/// params:
+///    txtInput : text on line
+/// return
+///    text   : text after cutting
+///    length : used for formatting in function fnFormatText
+///
+function fnCutTextSize(txtInput, width = 40) {
+    var result = '';
+    var count = 0;
+    var dataLength = txtInput.length;
+    for (var i = 0; i < dataLength; i++) {
+        var char = txtInput[i];
+        // check if the character has a Unicode code greater than 255 (not ASCII) to determine the length
+        var length = (char.charCodeAt(0) > 255) ? 2 : 1;
+        count += length;
+        if (count > width) {
+            break;
+        }
+        result += char;
+    }
+
+    return { text: result, length: count };
+}
+
+///
+/// fnFormatText : perform string slicing and text formatting according to options
+/// params:
+///    txtInput  : text on line
+///    alignment : values('0', '1', '2')
+///    highlight : values('0', '1', '2', '3', '4')
+///    width     : maximum size per line
+/// return
+///    text       : text is formatted according to alignment and alignment
+///    textOrigin : original text
+///
+function fnFormatText(txtInput, alignment = '0', highlight = '0', width = 40) {
+    var array = txtInput.split('');
+    if (highlight === '2' || highlight === '4') {
+        width = Math.floor(width / 2);
+    }
+
+    var cutTextSize = fnCutTextSize(txtInput, width);
+    var { text, length } = cutTextSize;
+    var textOrigin = txtInput;
+    var widthSpace = Math.max(0, width - length);
+
+    if (alignment === '0') {
+        text += ' '.repeat(widthSpace);
+    } else if (alignment === '1') {
+        var leftSpaces = Math.floor(widthSpace / 2);
+        var rightSpaces = widthSpace - leftSpaces;
+        text = ' '.repeat(leftSpaces) + text + ' '.repeat(rightSpaces);
+    } else if (alignment === '2') {
+        text = ' '.repeat(widthSpace) + text;
+    }
+
+    return { text, textOrigin };
+}
+
+</script>
+
+</body>
+</html>
