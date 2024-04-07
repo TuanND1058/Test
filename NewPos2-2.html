@@ -207,7 +207,7 @@ var editingInfo = {
 var dataDetail = [
     {
         seq: '001',
-        textOrigin: '',
+        originalText: '',
         buffer: ' ',
         alignment: '0',
         highlight: '0',
@@ -226,12 +226,15 @@ $(document).ready(function(){
     $('#txtInputText').on('input', function() {
         fnAutoNewlines('#txtInputText');
 
-        fnSetEditingInfo('#txtInputText');
+        //fnSetEditingInfo('#txtInputText');
 
         fnRenderRowBodyTable('#tblOptions tbody');
         fnRenderPreviewDetail('#divPreview');
 
         console.log("dataDetail" , dataDetail);
+
+        var filteredData = dataDetail.map(filterFields);
+        console.log("json" , JSON.stringify(filteredData));
     });
 
     $('#tblOptions thead').on('change', 'input[type="radio"], select', function() {
@@ -239,11 +242,16 @@ $(document).ready(function(){
 
         fnUpdateAllOptionsDetail(row);
 
+        fnHandleChangeOptions();
+
         fnRenderRowHeadTable('#tblOptions thead');
         fnRenderRowBodyTable('#tblOptions tbody');
         fnRenderPreviewDetail('#divPreview');
 
         console.log("dataDetail" , dataDetail);
+
+        var filteredData = dataDetail.map(filterFields);
+        console.log("json" , JSON.stringify(filteredData));
     });
 
     $('#tblOptions tbody').on('change', 'input[type="radio"], select', function() {
@@ -251,43 +259,15 @@ $(document).ready(function(){
 
         fnUpdateOptionsDetail(row);
 
-        var isAllTheSame = {
-            alignment: false,
-            highlight: false,
-            etc: false,
-            ejs: false,
-        };
-        isAllTheSame.alignment = dataDetail.every(function(item) {
-            return item.alignment === dataDetail[0].alignment;
-        });
-        isAllTheSame.highlight = dataDetail.every(function(item) {
-            return item.highlight === dataDetail[0].highlight;
-        });
-        isAllTheSame.etc = dataDetail.every(function(item) {
-            return item.etc === dataDetail[0].etc;
-        });
-        isAllTheSame.ejs = dataDetail.every(function(item) {
-            return item.ejs === dataDetail[0].ejs;
-        });
-        if (isAllTheSame.alignment) {
-            optionAll.alignment = dataDetail[0].alignment;
-        }
-        if (isAllTheSame.highlight) {
-            optionAll.highlight = dataDetail[0].highlight;
-        }
-        if (isAllTheSame.etc) {
-            optionAll.etc = dataDetail[0].etc;
-        }
-        if (isAllTheSame.ejs) {
-            optionAll.ejs = dataDetail[0].ejs;
-        }
+        fnHandleChangeOptions();
 
         fnRenderRowHeadTable('#tblOptions thead');
         fnRenderPreviewDetail('#divPreview');
 
-
         console.log("dataDetail" , dataDetail);
-        console.log("isAllTheSame" , isAllTheSame);
+
+        var filteredData = dataDetail.map(filterFields);
+        console.log("json" , JSON.stringify(filteredData));
     });
 
     $('#txtInputText').on('click', function() {
@@ -297,6 +277,17 @@ $(document).ready(function(){
     });
 
 });
+
+function filterFields(obj) {
+    return {
+        seq: obj.seq,
+        ori: obj.originalText,
+        ali: obj.alignment,
+        hig: obj.highlight,
+        etc: obj.etc,
+        ejs: obj.ejs
+    };
+}
 
 ///
 /// fnUpdateAllOptionsDetail
@@ -319,10 +310,10 @@ function fnUpdateAllOptionsDetail(row) {
         highlightAll = '0';
     }
 
-    optionAll.alignment = alignmentAll;
+    /*optionAll.alignment = alignmentAll;
     optionAll.highlight = highlightAll;
     optionAll.etc = etcAll;
-    optionAll.ejs = ejsAll;
+    optionAll.ejs = ejsAll;*/
 
     dataDetail.forEach(function(data) {
         var alignment = alignmentAll || data.alignment;
@@ -334,7 +325,7 @@ function fnUpdateAllOptionsDetail(row) {
             highlight = '0';
         }
 
-        var textFormat = fnFormatText(data.textOrigin, alignment, highlight, sizePerLine);
+        var textFormat = fnFormatText(data.originalText, alignment, highlight, sizePerLine);
         data.buffer = etcAll === '2' || etc === '2' ? barcode : textFormat.text;
         data.alignment = alignment;
         data.highlight = highlight;
@@ -360,7 +351,7 @@ function fnUpdateOptionsDetail(row) {
     var ejs = ejsElement.val();
 
     // Reset options in optionAll if necessary
-    if (optionAll.alignment && optionAll.alignment !== alignment) {
+    /*if (optionAll.alignment && optionAll.alignment !== alignment) {
         optionAll.alignment = '';
     }
     if (optionAll.highlight && optionAll.highlight !== highlight) {
@@ -371,10 +362,12 @@ function fnUpdateOptionsDetail(row) {
     }
     if (optionAll.ejs && optionAll.ejs !== ejs) {
         optionAll.ejs = '';
-    }
+    }*/
 
     var seq = row.data("seq");
-    var data = dataDetail.find(item => item.seq === seq);
+    var data = dataDetail.find(function(data) {
+        return data.seq === seq;
+    });
 
     if (etc !== '0') {
         alignment = '1';
@@ -382,7 +375,7 @@ function fnUpdateOptionsDetail(row) {
     }
 
     // Update dataDetail array
-    var textFormat = fnFormatText(data.textOrigin, alignment, highlight, sizePerLine);
+    var textFormat = fnFormatText(data.originalText, alignment, highlight, sizePerLine);
     data.buffer = etc === '2' ? barcode : textFormat.text;
     data.alignment = alignment || '0';
     data.highlight = highlight || '0';
@@ -422,6 +415,47 @@ function fnRenderRowBodyTable(idElement) {
     });
 
     container.append(htmlContent);
+}
+
+function fnHandleChangeOptions() {
+    var data = dataDetail.find(function(data) {
+        return data.etc === '0';
+    });
+
+    var dataAli = data ? data.alignment : '';
+    var dataHig = data ? data.highlight : '';
+    var dataEtc = data ? data.etc : dataDetail[0].etc;
+    var dataEjs = data ? data.ejs : dataDetail[0].ejs;
+
+    // for (var data of dataDetail) {
+    //     if (data.etc === '0') {
+    //         dataAli = data.alignment;
+    //         dataHig = data.highlight;
+    //         dataEtc = data.etc;
+    //         dataEjs = data.ejs;
+    //         break;
+    //     }
+    // }
+
+    var isAllTheSame = { ali: false, hig: false, etc: false, ejs: false };
+
+    isAllTheSame.ali = dataDetail.every(function(data) {
+        return data.alignment === dataAli || data.etc !== '0';
+    });
+    isAllTheSame.hig = dataDetail.every(function(data) {
+        return data.highlight === dataHig || data.etc !== '0';
+    });
+    isAllTheSame.etc = dataDetail.every(function(data) {
+        return data.etc === dataEtc;
+    });
+    isAllTheSame.ejs = dataDetail.every(function(data) {
+        return data.ejs === dataEjs;
+    });
+
+    optionAll.alignment = isAllTheSame.ali ? dataAli : '';
+    optionAll.highlight = isAllTheSame.hig ? dataHig : '';
+    optionAll.etc = isAllTheSame.etc ? dataEtc : '';
+    optionAll.ejs = isAllTheSame.ejs ? dataEjs : '';
 }
 
 ///
@@ -479,13 +513,15 @@ function fnRenderPreviewDetail(idElement) {
     previewDiv.empty();
 
     dataDetail.forEach(function(data) {
-        var preElement = $('<pre>').text(data.buffer || ' ');
+        if (data.ejs !== '2') {
+            var preElement = $('<pre>').text(data.buffer || ' ');
 
-        if (highlightClasses[data.highlight]) {
-            preElement.addClass(highlightClasses[data.highlight]);
+            if (highlightClasses[data.highlight]) {
+                preElement.addClass(highlightClasses[data.highlight]);
+            }
+
+            previewDiv.append(preElement);
         }
-
-        previewDiv.append(preElement);
     });
 }
 
@@ -507,13 +543,12 @@ function fnAutoNewlines(idElement) {
     var textarea = $(idElement);
     var text = textarea.val();
     var selectionPos = textarea[0].selectionStart;
-    var maxLength = sizePerLine;
     var lines = text.split('\n');
 
     for (var i = 0; i < lines.length; i++) {
         var line = lines[i];
-        var cutTextSize = fnCutTextSize(line).text;
-        maxLength = cutTextSize.length;
+        var cutTextSize = fnCutTextSize(line, sizePerLine).text;
+        var maxLength = cutTextSize.length;
 
         // automatically breaks the line after the limit is reached
         if (line.length > maxLength) {
@@ -533,6 +568,8 @@ function fnAutoNewlines(idElement) {
 
     var updatedText = lines.join('\n');
     textarea.val(updatedText);
+
+    // auto set height for textarea
     textarea.css('height', 'auto').height(textarea[0].scrollHeight);
 
     // restore cursor position
@@ -540,16 +577,20 @@ function fnAutoNewlines(idElement) {
 
     // set current line after update
     editingInfo.currentLine = fnGetCaretPosition(idElement);
+
+    fnSetEditingInfo(idElement);
 }
 
 ///
 /// fnSetEditingInfo : check whether lines are added or subtracted and do the work accordingly
 ///
 function fnSetEditingInfo(idElement) {
-    var textarea = $(idElement);
-    var text = textarea.val();
-    var currentLine = fnGetCaretPosition(idElement);
-    var rowCount = text.split('\n').length;
+    //var textarea = $(idElement);
+    //var text = textarea.val();
+    //var rowCount = text.split('\n').length;
+    //var currentLine = fnGetCaretPosition(idElement);
+    var currentLine = editingInfo.currentLine;
+    var rowCount = printLines.length;
     var addedRows = rowCount - editingInfo.rowCount;
 
     if (addedRows !== 0) {
@@ -577,7 +618,7 @@ function fnAddRowsTable(addedRows) {
         var seq = ('00' + (++preLine)).slice(-3);
         newData.push({
             seq: seq,
-            textOrigin: '',
+            originalText: '',
             buffer: ' ',
             alignment: optionAll.alignment || '0',
             highlight: optionAll.highlight || '0',
@@ -586,15 +627,14 @@ function fnAddRowsTable(addedRows) {
         });
     }
 
-    if (addedRows > 0) {
-        dataDetail.splice(preLine - addedRows, 0, ...newData);
-    }
     // if (addedRows > 0) {
-    //     // Calculate the index to insert the new data
-    //     var insertIndex = preLine - addedRows;
-    //     // Combine newData with dataDetail using concat
-    //     dataDetail = dataDetail.slice(0, insertIndex).concat(newData, dataDetail.slice(insertIndex));
+    //     dataDetail.splice(preLine - addedRows, 0, ...newData);
     // }
+    if (addedRows > 0) {
+        var insertIndex = preLine - addedRows;
+        // Combine newData with dataDetail using concat
+        dataDetail = dataDetail.slice(0, insertIndex).concat(newData, dataDetail.slice(insertIndex));
+    }
 }
 
 ///
@@ -618,13 +658,13 @@ function fnUpdateDataDetail() {
         var data = dataDetail[i];
         var printLine = printLines[i];
 
-        var buffer = fnFormatText(printLine, data.alignment, data.highlight, sizePerLine);
+        var formatText = fnFormatText(printLine, data.alignment, data.highlight, sizePerLine);
 
         var seq = ('00' + (i + 1)).slice(-3);
-        var textOrigin = buffer.textOrigin;
-        var bufferText = (data.etc === '2') ? barcode : buffer.text;
+        var originalText = formatText.originalText;
+        var buffer = (data.etc === '2') ? barcode : formatText.text;
 
-        Object.assign(data, { seq, textOrigin, buffer: bufferText });
+        Object.assign(data, { seq, originalText, buffer });
     }
 }
 
@@ -637,22 +677,22 @@ function fnUpdateDataDetail() {
 ///    length : used for formatting in function fnFormatText
 ///
 function fnCutTextSize(txtInput, width = 40) {
-    var result = '';
-    var count = 0;
+    var text = '';
+    var length = 0;
     var dataLength = txtInput.length;
     for (var i = 0; i < dataLength; i++) {
         var char = txtInput[i];
         // check if the character has a Unicode code greater than 255 (not ASCII) to determine the length
-        var length = (char.charCodeAt(0) > 255) ? 2 : 1;
-        //var length = escape(char).split('%u').length;
-        count += length;
-        if (count > width) {
+        var count = (char.charCodeAt(0) > 255) ? 2 : 1;
+        //var count = escape(char).split('%u').length;
+        length += count;
+        if (length > width) {
             break;
         }
-        result += char;
+        text += char;
     }
 
-    return { text: result, length: count };
+    return { text, length };
 }
 
 ///
@@ -664,30 +704,36 @@ function fnCutTextSize(txtInput, width = 40) {
 ///    width     : maximum size per line
 /// return
 ///    text       : text is formatted according to alignment and alignment
-///    textOrigin : original text
+///    originalText : original text
 ///
 function fnFormatText(txtInput, alignment = '0', highlight = '0', width = 40) {
-    var array = txtInput.split('');
     if (highlight === '2' || highlight === '4') {
         width = Math.floor(width / 2);
     }
 
     var cutTextSize = fnCutTextSize(txtInput, width);
-    var { text, length } = cutTextSize;
-    var textOrigin = txtInput;
+    var originalText = txtInput;
+    var text = cutTextSize.text;
+    var length = cutTextSize.length;
     var widthSpace = Math.max(0, width - length);
 
-    if (alignment === '0') {
-        text += ' '.repeat(widthSpace);
-    } else if (alignment === '1') {
-        var leftSpaces = Math.floor(widthSpace / 2);
-        var rightSpaces = widthSpace - leftSpaces;
-        text = ' '.repeat(leftSpaces) + text + ' '.repeat(rightSpaces);
-    } else if (alignment === '2') {
-        text = ' '.repeat(widthSpace) + text;
+    switch (alignment) {
+        case '0':
+            text += ' '.repeat(widthSpace);
+            break;
+        case '1':
+            var leftSpaces = Math.floor(widthSpace / 2);
+            var rightSpaces = widthSpace - leftSpaces;
+            text = ' '.repeat(leftSpaces) + text + ' '.repeat(rightSpaces);
+            break;
+        case '2':
+            text = ' '.repeat(widthSpace) + text;
+            break;
+        default:
+            break;
     }
 
-    return { text, textOrigin };
+    return { text, originalText };
 }
 
 </script>
