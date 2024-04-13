@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dropdown với Checkbox</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        /* Tạo kiểu cho dropdown */
+        .custom-select {
+            position: relative;
+            display: inline-block;
+            width: 200px;
+        }
+
+        .select-button {
+            padding: 5px 10px;
+            width: 100%;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .dropdown-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            z-index: 1;
+            display: none;
+            background-color: white;
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            box-sizing: border-box;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        /* Tạo kiểu cho các tùy chọn */
+        .dropdown-list label {
+            display: block;
+            padding: 0 5px;
+            cursor: pointer;
+        }
+
+        .dropdown-list label:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="custom-select">
+        <button class="select-button">Chọn tùy chọn</button>
+        <div class="dropdown-list">
+            <label><input type="checkbox" id="all-option" value="all"> Tất cả</label>
+            <label><input type="checkbox" id="odd-option" value="odd"> Số lẻ</label>
+            <label><input type="checkbox" id="even-option" value="even"> Số chẵn</label>
+            <label><input type="checkbox" value="1"> Tùy chọn 1</label>
+            <label><input type="checkbox" value="2"> Tùy chọn 2</label>
+            <label><input type="checkbox" value="3"> Tùy chọn 3</label>
+            <label><input type="checkbox" value="4"> Tùy chọn 4</label>
+            <label><input type="checkbox" value="5"> Tùy chọn 5</label>
+            <label><input type="checkbox" value="6"> Tùy chọn 6</label>
+            <!-- Thêm các tùy chọn khác tại đây -->
+        </div>
+        <input type="hidden" id="selected-values" name="selected-values" value="000000">
+    </div>
+
+    <script>
+        // $(document).ready(function() {
+        //     // Khi nhấp vào nút chọn, hiển thị hoặc ẩn dropdown list
+        //     $('.select-button').click(function() {
+        //         $('.dropdown-list').toggle();
+        //     });
+
+        //     // Đóng dropdown khi nhấp ra ngoài nó
+        //     $(document).click(function(event) {
+        //         if (!$(event.target).closest('.custom-select').length) {
+        //             $('.dropdown-list').hide();
+        //         }
+        //     });
+
+        //     // Xử lý sự kiện khi tùy chọn "All" được chọn hoặc bỏ chọn
+        //     $('#all-option').change(function() {
+        //         var isChecked = $(this).is(':checked');
+        //         $('.dropdown-list input[type="checkbox"]').not(this).prop('checked', isChecked);
+        //     });
+
+        //     // Xử lý sự kiện khi tùy chọn "Odd" (số lẻ) được chọn hoặc bỏ chọn
+        //     $('#odd-option').change(function() {
+        //         var isChecked = $(this).is(':checked');
+        //         $('.dropdown-list input[type="checkbox"]').not('#all-option, #odd-option, #even-option').each(function() {
+        //             var value = parseInt($(this).val());
+        //             // Chọn hoặc bỏ chọn option nếu giá trị là số lẻ
+        //             if (value % 2 === 1) {
+        //                 $(this).prop('checked', isChecked);
+        //             }
+        //         });
+        //     });
+
+        //     // Xử lý sự kiện khi tùy chọn "Even" (số chẵn) được chọn hoặc bỏ chọn
+        //     $('#even-option').change(function() {
+        //         var isChecked = $(this).is(':checked');
+        //         $('.dropdown-list input[type="checkbox"]').not('#all-option, #odd-option, #even-option').each(function() {
+        //             var value = parseInt($(this).val());
+        //             // Chọn hoặc bỏ chọn option nếu giá trị là số chẵn
+        //             if (value % 2 === 0) {
+        //                 $(this).prop('checked', isChecked);
+        //             }
+        //         });
+        //     });
+
+        //     // Xử lý sự kiện thay đổi cho các tùy chọn khác
+        //     $('.dropdown-list input[type="checkbox"]').not('#all-option, #odd-option, #even-option').change(function() {
+        //         var allChecked = true;
+        //         var oddChecked = true;
+        //         var evenChecked = true;
+
+        //         // Kiểm tra xem tất cả các tùy chọn khác đều được chọn
+        //         $('.dropdown-list input[type="checkbox"]').not('#all-option, #odd-option, #even-option').each(function() {
+
+        //             if (!$(this).is(':checked')) {
+        //                 allChecked = false;
+        //                 if (parseInt($(this).val()) % 2 === 0) {
+        //                     oddChecked = false;
+        //                 } else {
+        //                     evenChecked = false;
+        //                 }
+        //             } else {
+        //                 if (parseInt($(this).val()) % 2 === 0) {
+        //                     oddChecked = false;
+        //                 } else {
+        //                     evenChecked = false;
+        //                 }
+        //             }
+        //         });
+
+        //         $('#all-option').prop('checked', allChecked);
+        //         $('#odd-option').prop('checked', oddChecked);
+        //         $('#even-option').prop('checked', evenChecked);
+        //     });
+        // });
+
+        $(document).ready(function() {
+            function updateHiddenInput() {
+                var selectedValues = [];
+                $('.dropdown-list input[type="checkbox"]').not('#all-option, #odd-option, #even-option').each(function() {
+                    if (!$(this).is(':checked')) {
+                        selectedValues.push('0');
+                    } else {
+                        selectedValues.push('1');
+                    }
+                });
+
+                $('#selected-values').val(selectedValues.join(''));
+            }
+
+            $('.select-button').click(function() {
+                $('.dropdown-list').toggle();
+            });
+
+            $(document).click(function(event) {
+                if (!$(event.target).closest('.custom-select').length) {
+                    $('.dropdown-list').hide();
+                }
+            });
+
+            $('#all-option').change(function() {
+                var isChecked = $(this).is(':checked');
+                $('.dropdown-list input[type="checkbox"]').not(this).prop('checked', isChecked);
+                updateHiddenInput();
+            });
+
+            $('#odd-option').change(function() {
+                var isChecked = $(this).is(':checked');
+                $('.dropdown-list input[type="checkbox"]').not('#all-option, #odd-option, #even-option').each(function() {
+                    var value = parseInt($(this).val());
+                    if (value % 2 !== 0) {
+                        $(this).prop('checked', isChecked);
+                    }
+                });
+                updateHiddenInput();
+            });
+
+            $('#even-option').change(function() {
+                var isChecked = $(this).is(':checked');
+                $('.dropdown-list input[type="checkbox"]').not('#all-option, #odd-option, #even-option').each(function() {
+                    var value = parseInt($(this).val());
+                    if (value % 2 === 0) {
+                        $(this).prop('checked', isChecked);
+                    }
+                });
+                updateHiddenInput();
+            });
+
+            $('.dropdown-list input[type="checkbox"]').not('#all-option, #odd-option, #even-option').change(function() {
+                var allChecked = true;
+                var oddChecked = true;
+                var evenChecked = true;
+                console.log('========', oddChecked, evenChecked);
+var i=1
+                $('.dropdown-list input[type="checkbox"]').not('#all-option, #odd-option, #even-option').each(function() {
+                    var value = parseInt($(this).val());
+
+                    console.log(i, oddChecked, evenChecked);
+
+                    if (!$(this).is(':checked')) {
+                        allChecked = false;
+                        if (value % 2 === 0) {
+                            oddChecked = false;
+                        } else {
+                            evenChecked = false;
+                        }
+                    } else {
+                        if (value % 2 === 0) {
+                            oddChecked = false;
+                        } else {
+                            evenChecked = false;
+                        }
+                    }
+
+                    console.log(i++, oddChecked, evenChecked);
+                });
+
+                $('#all-option').prop('checked', allChecked);
+                $('#odd-option').prop('checked', oddChecked);
+                $('#even-option').prop('checked', evenChecked);
+
+                updateHiddenInput();
+            });
+        });
+    </script>
+</body>
+</html>

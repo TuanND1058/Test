@@ -646,6 +646,7 @@ function fnAutoAdjustNewlines(idElement) {
                 // Otherwise, split the line at the maximum length
                 lines[i] = line.substring(0, maxLength);
                 lines.splice(i + 1, 0, line.substring(maxLength));
+                selectionPos += 1;
             }
         }
     }
