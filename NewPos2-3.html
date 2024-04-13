@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Textarea Functions</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js" integrity="sha512-YHQNqPhxuCY2ddskIbDlZfwY6Vx3L3w9WRbyJCY81xpqLmrM6rL2+LocBgeVHwGY9SXYfQWJ+lcEWx1fKS2s8A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
+</head>
+<style>
+body{
+    font-size: 12px;
+}
+
+.non-resize-textarea {
+    overflow: hidden;
+    resize: none;
+    line-height: 2;
+    padding: 0 5px;
+    margin-bottom: -5px;
+    border: none;
+}
+
+.preview {
+    position: sticky;
+    top: 15px;
+    max-height: 500px;
+    overflow-y: auto;
+    text-align: center;
+    border: 1px solid gray;
+    padding: 5px 10px;
+}
+
+textarea {
+    font-family: 'Courier New', Courier, monospace;
+}
+
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 0 5px;
+}
+
+pre {
+    font-family: 'Courier New', Courier, monospace;
+    display: block;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    border: transparent;
+    background-color: transparent;
+    line-height: 1.1;
+    overflow: hidden;
+    width: 100%;
+}
+
+.hl-normal {
+
+}
+
+.hl-bold {
+    font-weight: bold;
+}
+
+.hl-double-w {
+    transform: scaleX(2);
+    transform-origin: left;
+    width: 50%;
+}
+
+.hl-double-h {
+    transform: scaleY(2);
+    transform-origin: top;
+    margin-bottom: 12px;
+}
+
+.hl-double-wh {
+    transform: scale(2);
+    transform-origin: top left;
+    width: 50%;
+    margin-bottom: 12px;
+}
+
+label {
+    margin: 0;
+}
+
+label:has(input[type="radio"]:disabled) {
+    color: #797979;
+}
+</style>
+<body>
+
+<br>
+
+<div class="container">
+<div class="row">
+    <div class="col-md-8" style="background-color: #dddddd; margin-bottom: 50px;">
+        <div class="row">
+            <!-- <div class="col-md-5">
+                <div style="margin-bottom: 23px;">Print Line</div>
+                <textarea class="non-resize-textarea" id="txtInputText" rows="1" cols="41"></textarea>
+            </div> -->
+            <div class="col-md-12" style="background-color: #ffc9c9;">
+                <table id="tblOptions">
+                    <thead>
+                        <tr>
+                            <th>
+                                Print line
+                            </th>
+                            <th>
+                                Alignment
+                                <br/>
+                                <select name="alignmentAll" id="alignmentAll">
+                                    <option value="">---</option>
+                                    <option value="0">Left</option>
+                                    <option value="1">Center</option>
+                                    <option value="2">Right</option>
+                                </select>
+                            </th>
+                            <th>
+                                Highlight
+                                <br>
+                                <select name="highlightAll" id="highlightAll">
+                                    <option value="">---</option>
+                                    <option value="0">Normal</option>
+                                    <option value="1">Bold</option>
+                                    <option value="2">DoubleW</option>
+                                    <option value="3">DoubleH</option>
+                                    <option value="4">DoubleWH</option>
+                                </select>
+                            </th>
+                            <th>
+                                Etc
+                                <br>
+                                <select name="etcAll" id="etcAll">
+                                    <option value="">---</option>
+                                    <option value="0">Normal</option>
+                                    <option value="1">Gift Code</option>
+                                    <option value="2">Barcode</option>
+                                </select>
+                            </th>
+                            <th>
+                                EJS
+                                <br>
+                                <select name="ejsAll" id="ejsAll">
+                                    <option value="">---</option>
+                                    <option value="1">Normal</option>
+                                    <option value="0">None</option>
+                                    <option value="2">EJS only</option>
+                                </select>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr id="txtInputTextMain">
+                            <td rowspan="3" style="padding: 0;">
+                                <textarea class="non-resize-textarea" id="txtInputText" rows="1" cols="41"></textarea>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div id="divPreview" class="col-md-4 preview">
+        <pre>태그의 각 줄 미리보기</pre>
+        <pre>태그의 각 줄 미리보기</pre>
+    </div>
+</div>
+</div>
+
+<script>
+
+// Variable representing a barcode placeholder
+var barcode = '[barcode]';
+
+// Variable representing the size per line
+var sizePerLine = 40;
+
+// Array to store print lines
+var printLines = [];
+
+// Object containing global options for all rows
+var globalOptions = {
+    alignment: '0',
+    highlight: '0',
+    etc: '0',
+    ejs: '1'
+};
+
+// Object mapping highlight values to corresponding CSS classes
+var highlightClasses = {
+    '0': 'hl-normal',
+    '1': 'hl-bold',
+    '2': 'hl-double-w',
+    '3': 'hl-double-h',
+    '4': 'hl-double-wh'
+};
+
+// Object containing editing information
+var editingInfo = {
+    previousLine: 1,
+    currentLine: 1,
+    rowCount: 1
+};
+
+// Array to store detailed data for each row
+var rowData = [
+    {
+        seq: '001',
+        originalText: '',
+        buffer: ' ',
+        alignment: '0',
+        highlight: '0',
+        etc: '0',
+        ejs: '1'
+    }
+];
+
+// Function to initialize the page
+$(document).ready(function(){
+
+    // Render the header row of the table
+    fnRenderHeaderRowTable();
+
+    // Render the body of the table with row options
+    fnRenderRowBodyTable('#tblOptions tbody');
+
+    // Render the preview detail
+    fnRenderPreviewDetail('#divPreview');
+
+    // Handle input events in the main text area
+    $('#txtInputText').on('input', function() {
+        // Automatically add newlines when needed
+        fnAutoAdjustNewlines('#txtInputText');
+
+        // Render the body of the table with updated row options
+        fnRenderRowBodyTable('#tblOptions tbody');
+
+        // Render the preview detail
+        fnRenderPreviewDetail('#divPreview');
+
+        // Log the detailed data
+        console.log("rowData", rowData);
+
+        // Filter and log the detailed data as JSON
+        var filteredData = rowData.map(fnFilterFields);
+        console.log("json", JSON.stringify(filteredData));
+    });
+
+    // Handle change events in the header row of the table
+    $('#tblOptions thead').on('change', 'input[type="radio"], select', function() {
+        var row = $(this).closest('tr');
+
+        // Update all options based on user input
+        fnUpdateAllOptionsDetail(row);
+
+        // Handle change in options
+        fnHandleChangeOptions();
+
+        // Render the header row of the table
+        fnRenderHeaderRowTable();
+
+        // Render the body of the table with updated row options
+        fnRenderRowBodyTable('#tblOptions tbody');
+
+        // Render the preview detail
+        fnRenderPreviewDetail('#divPreview');
+
+        // Log the detailed data
+        console.log("rowData", rowData);
+
+        // Filter and log the detailed data as JSON
+        var filteredData = rowData.map(fnFilterFields);
+        console.log("json", JSON.stringify(filteredData));
+    });
+
+    // Handle change events in the body of the table
+    $('#tblOptions tbody').on('change', 'input[type="radio"], select', function() {
+        var row = $(this).closest('tr');
+
+        // Update options and content based on user input
+        fnUpdateOptionsDetail(row);
+
+        // Handle change in options
+        fnHandleChangeOptions();
+
+        // Render the header row of the table
+        fnRenderHeaderRowTable();
+
+        // Render the preview detail
+        fnRenderPreviewDetail('#divPreview');
+
+        // Log the detailed data
+        console.log("rowData", rowData);
+
+        // Filter and log the detailed data as JSON
+        var filteredData = rowData.map(fnFilterFields);
+        console.log("json", JSON.stringify(filteredData));
+    });
+
+    // Handle click events in the main text area
+    $('#txtInputText').on('click', function() {
+        // Get the current line number of the caret position
+        var currentLine = fnGetCaretLineNumber('#txtInputText');
+
+        // Update the editing information
+        editingInfo.previousLine = currentLine;
+        editingInfo.currentLine = currentLine;
+    });
+
+});
+
+
+function fnFilterFields(obj) {
+    return {
+        seq: obj.seq,
+        ori: obj.originalText,
+        ali: obj.alignment,
+        hig: obj.highlight,
+        etc: obj.etc,
+        ejs: obj.ejs
+    };
+}
+
+/**
+ * Updates all options and content of detail rows based on user input for global options.
+ * @param {jQuery} row - The jQuery object representing the row containing global options.
+ */
+function fnUpdateAllOptionsDetail(row) {
+    // Extract select elements for global options from the row
+    var alignmentAllElement = row.find('select').eq(0);
+    var highlightAllElement = row.find('select').eq(1);
+    var etcAllElement = row.find('select').eq(2);
+    var ejsAllElement = row.find('select').eq(3);
+
+    // Get the values of global alignment, highlight, etc., and ejs from the select elements
+    var alignmentAll = alignmentAllElement.val();
+    var highlightAll = highlightAllElement.val();
+    var etcAll = etcAllElement.val();
+    var ejsAll = ejsAllElement.val();
+
+    // Adjust global alignment and highlight if global etc is not '0' (normal)
+    if (etcAll && etcAll !== '0') {
+        alignmentAll = '1'; // Center alignment
+        highlightAll = '0'; // Normal highlight
+    }
+
+    // Iterate through each data object in dataDetail
+    dataDetail.forEach(function(data) {
+        // Update individual options and content for each data object based on global options
+        var alignment = alignmentAll || data.alignment;
+        var highlight = highlightAll || data.highlight;
+        var etc = etcAll || data.etc;
+
+        // Adjust alignment and highlight if etc is not '0' (normal)
+        if (data.etc !== '0') {
+            alignment = '1'; // Center alignment
+            highlight = '0'; // Normal highlight
+        }
+
+        // Format the text based on the updated options
+        var textFormat = fnFormatText(data.originalText, alignment, highlight, sizePerLine);
+
+        // Update the buffer, alignment, highlight, etc., and ejs properties of the data object
+        data.buffer = (etcAll === '2' || etc === '2') ? barcode : textFormat.text;
+        data.alignment = alignment;
+        data.highlight = highlight;
+        data.etc = etc;
+        data.ejs = ejsAll || data.ejs;
+    });
+}
+
+/**
+ * Updates the options and content of a detail row based on user input.
+ * @param {jQuery} row - The jQuery object representing the row to be updated.
+ */
+function fnUpdateOptionsDetail(row) {
+    // Extract select elements from the row
+    var alignmentElement = row.find('select').eq(0);
+    var highlightElement = row.find('select').eq(1);
+    var etcElement = row.find('select').eq(2);
+    var ejsElement = row.find('select').eq(3);
+
+    // Get the values of alignment, highlight, etc., and ejs from the select elements
+    var alignment = alignmentElement.val();
+    var highlight = highlightElement.val();
+    var etc = etcElement.val();
+    var ejs = ejsElement.val();
+
+    // Get the sequence of the row
+    var seq = row.data("seq");
+
+    // Find the corresponding data object in dataDetail based on the sequence
+    var data = dataDetail.find(function(data) {
+        return data.seq === seq;
+    });
+
+    // Adjust alignment and highlight if etc is not '0' (normal)
+    if (etc !== '0') {
+        alignment = '1'; // Center alignment
+        highlight = '0'; // Normal highlight
+    }
+
+    // Format the text based on the updated options
+    var textFormat = fnFormatText(data.originalText, alignment, highlight, sizePerLine);
+
+    // Update the data object with the new options and content
+    data.buffer = etc === '2' ? barcode : textFormat.text;
+    data.alignment = alignment || '0'; // Default to left alignment if no value is selected
+    data.highlight = highlight || '0'; // Default to normal highlight if no value is selected
+    data.etc = etc || '0'; // Default to normal etc if no value is selected
+    data.ejs = ejs || '1'; // Default to normal ejs if no value is selected
+
+    // Clear the content of the row
+    row.empty();
+
+    // Generate HTML content for the updated row options
+    var htmlContent = createRowOptionsAsHTML(data);
+
+    // Replace the row with the updated HTML content
+    row.replaceWith(htmlContent);
+}
+
+/**
+ * Renders the header row of the table based on the global options.
+ */
+function fnRenderHeaderRowTable() {
+    // Determine if the options are disabled based on the global etc option
+    var disabled = (optionAll.etc && optionAll.etc !== '0');
+
+    // Set the values and disabled status of the alignment, highlight, etc, and ejs select elements
+    $('#alignmentAll').val(optionAll.alignment).prop('disabled', disabled);
+    $('#highlightAll').val(optionAll.highlight).prop('disabled', disabled);
+    $('#etcAll').val(optionAll.etc);
+    $('#ejsAll').val(optionAll.ejs);
+}
+
+/**
+ * Renders the body of the table rows based on the provided data.
+ * @param {string} idElement - The ID of the HTML element where the table rows will be rendered.
+ */
+function fnRenderRowBodyTable(idElement) {
+    // Get the container element
+    var container = $(idElement);
+
+    // Remove any existing sibling elements of the main input text
+    $('#txtInputTextMain').siblings().remove();
+
+    // Update the rowspan of the main input text cell to accommodate the current row count
+    $('#txtInputTextMain > td').attr('rowspan', editingInfo.rowCount + 1);
+
+    // Initialize HTML content
+    var htmlContent = '';
+
+    // Iterate through each data in dataDetail and create HTML row options
+    dataDetail.forEach(function(data) {
+        htmlContent += createRowOptionsAsHTML(data);
+    });
+
+    // Append the HTML content to the container
+    container.append(htmlContent);
+}
+
+/**
+ * Handles the change of options by analyzing the data detail to determine if all rows have the same options.
+ */
+function fnHandleChangeOptions() {
+    // Find the first data with etc value of '0' (normal)
+    var data = dataDetail.find(function(data) {
+        return data.etc === '0';
+    });
+
+    // Initialize variables to store the alignment, highlight, etc., and ejs values
+    var dataAlignment = data ? data.alignment : '';
+    var dataHighlight = data ? data.highlight : '';
+    var dataEtc = data ? data.etc : dataDetail[0].etc;
+    var dataEjs = data ? data.ejs : dataDetail[0].ejs;
+
+    // Initialize an object to track if all rows have the same options
+    var isAllTheSame = { alignment: false, highlight: false, etc: false, ejs: false };
+
+    // Check if all rows have the same alignment as the first normal row or are not normal rows
+    isAllTheSame.alignment = dataDetail.every(function(data) {
+        return data.alignment === dataAlignment || data.etc !== '0';
+    });
+
+    // Check if all rows have the same highlight as the first normal row or are not normal rows
+    isAllTheSame.highlight = dataDetail.every(function(data) {
+        return data.highlight === dataHighlight || data.etc !== '0';
+    });
+
+    // Check if all rows have the same etc value
+    isAllTheSame.etc = dataDetail.every(function(data) {
+        return data.etc === dataEtc;
+    });
+
+    // Check if all rows have the same ejs value
+    isAllTheSame.ejs = dataDetail.every(function(data) {
+        return data.ejs === dataEjs;
+    });
+
+    // Update the global optionAll object with the most common options if all rows have the same options
+    optionAll.alignment = isAllTheSame.alignment ? dataAlignment : '';
+    optionAll.highlight = isAllTheSame.highlight ? dataHighlight : '';
+    optionAll.etc = isAllTheSame.etc ? dataEtc : '';
+    optionAll.ejs = isAllTheSame.ejs ? dataEjs : '';
+}
+
+/**
+ * Creates HTML options for a table row based on the provided data.
+ * @param {object} data - The data object containing sequence, alignment, highlight, etc, and ejs information.
+ * @returns {string} The HTML content representing the table row options.
+ */
+function createRowOptionsAsHTML(data) {
+    // Extract data properties
+    var seq = data.seq;
+    var alignment = data.alignment;
+    var highlight = data.highlight;
+    var etc = data.etc;
+    var ejs = data.ejs;
+
+    // Generate HTML content for table row options
+    var htmlContent =
+        '<tr id="seq' + seq + '" data-seq="' + seq + '">' +
+            '<td>' +
+                '<select name="alignment' + seq + '" ' + (etc !== '0' ? 'disabled' : '') + '>' +
+                    '<option value="0" ' + (alignment === '0' ? 'selected' : '') + '>Left</option>' +
+                    '<option value="1" ' + (alignment === '1' ? 'selected' : '') + '>Center</option>' +
+                    '<option value="2" ' + (alignment === '2' ? 'selected' : '') + '>Right</option>' +
+                '</select>' +
+            '</td>' +
+            '<td>' +
+                '<select name="highlight' + seq + '" ' + (etc !== '0' ? 'disabled' : '') + '>' +
+                    '<option value="0" ' + (highlight === '0' ? 'selected' : '') + '>Normal</option>' +
+                    '<option value="1" ' + (highlight === '1' ? 'selected' : '') + '>Bold</option>' +
+                    '<option value="2" ' + (highlight === '2' ? 'selected' : '') + '>DoubleW</option>' +
+                    '<option value="3" ' + (highlight === '3' ? 'selected' : '') + '>DoubleH</option>' +
+                    '<option value="4" ' + (highlight === '4' ? 'selected' : '') + '>DoubleWH</option>' +
+                '</select>' +
+            '</td>' +
+            '<td>' +
+                '<select name="etc' + seq + '">' +
+                    '<option value="0" ' + (etc === '0' ? 'selected' : '') + '>Normal</option>' +
+                    '<option value="1" ' + (etc === '1' ? 'selected' : '') + '>Gift Code</option>' +
+                    '<option value="2" ' + (etc === '2' ? 'selected' : '') + '>Barcode</option>' +
+                '</select>' +
+            '</td>' +
+            '<td>' +
+                '<select name="ejs' + seq + '">' +
+                    '<option value="1" ' + (ejs === '1' ? 'selected' : '') + '>Normal</option>' +
+                    '<option value="0" ' + (ejs === '0' ? 'selected' : '') + '>None</option>' +
+                    '<option value="2" ' + (ejs === '2' ? 'selected' : '') + '>EJS only</option>' +
+                '</select>' +
+            '</td>' +
+        '</tr>';
+
+    return htmlContent;
+}
+
+/**
+ * Renders the preview detail in the specified HTML element.
+ * @param {string} idElement - The ID of the HTML element where the preview will be rendered.
+ */
+function fnRenderPreviewDetail(idElement) {
+    // Get the preview div element
+    var previewDiv = $(idElement);
+
+    // Clear any existing content in the preview div
+    previewDiv.empty();
+
+    // Iterate through each data detail
+    dataDetail.forEach(function(data) {
+        // Check if the data is not excluded from rendering (ejs isn't only EJS)
+        if (data.ejs !== '2') {
+            // Create a <pre> element and set its text content to the data buffer or a space if buffer is empty
+            var preElement = $('<pre>').text(data.buffer || ' ');
+
+            // Add highlight class to the <pre> element if specified in the data
+            if (highlightClasses[data.highlight]) {
+                preElement.addClass(highlightClasses[data.highlight]);
+            }
+
+            // Append the <pre> element to the preview div
+            previewDiv.append(preElement);
+        }
+    });
+}
+
+/**
+ * Retrieves the current line number of the caret position in a textarea.
+ * @param {string} idElement - The ID of the textarea element.
+ * @returns {number} The current line number of the caret position.
+ */
+function fnGetCaretLineNumber(idElement) {
+    // Get the textarea element
+    var textarea = $(idElement);
+    var text = textarea.val();
+    var selectionPos = textarea[0].selectionStart;
+
+    // Determine the current line number based on the caret position
+    var currentLine = text.substring(0, selectionPos).split('\n').length;
+
+    return currentLine;
+}
+
+/**
+ * Automatically adds newlines in a textarea to ensure text fits within the specified size per line.
+ * @param {string} idElement - The ID of the textarea element.
+ */
+function fnAutoAdjustNewlines(idElement) {
+    // Get the textarea element
+    var textarea = $(idElement);
+    var text = textarea.val();
+    var selectionPos = textarea[0].selectionStart;
+
+    // Split the text into lines
+    var lines = text.split('\n');
+
+    // Iterate through each line
+    for (var i = 0; i < lines.length; i++) {
+        var line = lines[i];
+        // Get the cut text size for the current line
+        var cutTextSize = cutTextSize(line, sizePerLine).text;
+        var maxLength = cutTextSize.length;
+
+        // If the line exceeds the maximum length, add newlines as necessary
+        if (line.length > maxLength) {
+            var spacePos = line.lastIndexOf(' ', maxLength);
+            // If there is a space within the maximum length, split the line at the space
+            if (spacePos !== -1) {
+                lines[i] = line.substring(0, spacePos);
+                lines.splice(i + 1, 0, line.substring(spacePos + 1));
+            } else {
+                // Otherwise, split the line at the maximum length
+                lines[i] = line.substring(0, maxLength);
+                lines.splice(i + 1, 0, line.substring(maxLength));
+            }
+        }
+    }
+
+    // Update the printLines array with the modified lines
+    printLines = lines;
+
+    // Join the lines with newline characters and update the textarea value
+    var updatedText = lines.join('\n');
+    textarea.val(updatedText);
+
+    // Adjust the height of the textarea to fit its content
+    textarea.css('height', 'auto').height(textarea[0].scrollHeight);
+
+    // Restore the cursor position
+    textarea[0].setSelectionRange(selectionPos, selectionPos);
+
+    // Update the current line in the editing information
+    editingInfo.currentLine = fnGetCaretPosition(idElement);
+
+    // Update editing information
+    updateEditingInfo();
+}
+
+/**
+ * Updates the editing information and adjusts the data detail accordingly.
+ */
+function updateEditingInfo() {
+    // Get the current line being edited and the number of rows in printLines
+    var currentLine = editingInfo.currentLine;
+    var rowCount = printLines.length;
+
+    // Calculate the difference in rows between the previous and current state
+    var addedRows = rowCount - editingInfo.rowCount;
+
+    // If rows have been added or deleted, update the data detail accordingly
+    if (addedRows !== 0) {
+        if (addedRows > 0) {
+            addRowsToTable(addedRows);
+        } else {
+            deleteRowsFromTable(addedRows);
+        }
+    }
+
+    // Update the data detail to reflect any changes in the print lines
+    updateDataDetail();
+
+    // Update editingInfo with current line and row count
+    editingInfo.previousLine = currentLine;
+    editingInfo.rowCount = rowCount;
+}
+
+/**
+ * Adds rows to the table in the data detail based on the number of added rows.
+ * @param {number} addedRows - The number of rows to be added.
+ */
+function addRowsToTable(addedRows) {
+    // Get the line number of the previous line being edited
+    var previousLine = editingInfo.previousLine;
+    var newData = [];
+
+    // Generate new data for each added row
+    for (var i = 0; i < addedRows; i++) {
+        // Generate sequence number with leading zeros
+        var seq = ('00' + (++previousLine)).slice(-3);
+        // Push new row data into newData array
+        newData.push({
+            seq: seq,
+            originalText: '',
+            buffer: ' ',
+            alignment: optionAll.alignment || '0',
+            highlight: optionAll.highlight || '0',
+            etc: optionAll.etc || '0',
+            ejs: optionAll.ejs || '1'
+        });
+    }
+
+    // If rows are added, insert newData into dataDetail at appropriate index
+    if (addedRows > 0) {
+        var insertIndex = preLine - addedRows;
+        try {
+            // Using spread operator to insert new data into the table
+            dataDetail.splice(insertIndex, 0, ...newData);
+        } catch (error) {
+            // Handling if spread operator is not supported
+            // Combine newData with dataDetail using concat
+            dataDetail = dataDetail.slice(0, insertIndex).concat(newData, dataDetail.slice(insertIndex));
+        }
+    }
+}
+
+/**
+ * Deletes rows from the table in the data detail based on the number of added rows.
+ * @param {number} addedRows - The number of rows to be deleted.
+ */
+function deleteRowsFromTable(addedRows) {
+    // Get the current line being edited
+    var currentLine = editingInfo.currentLine;
+
+    // Determine the start index and the number of rows to delete
+    var start = currentLine;
+    var deleteCount = Math.abs(addedRows);
+
+    // Remove rows from the data detail starting from the current line
+    dataDetail.splice(start, deleteCount);
+}
+
+/**
+ * Updates the data details by formatting print lines according to specified alignment, highlight, and sizePerLine.
+ */
+function updateDataDetail() {
+    // Loop through each data detail
+    var dataLength = dataDetail.length;
+    for (var i = 0; i < dataLength; i++) {
+        var data = dataDetail[i];
+        var printLine = printLines[i];
+
+        // Format the print line text
+        var formattedText = fnFormatText(printLine, data.alignment, data.highlight, sizePerLine);
+
+        // Generate sequence number with leading zeros
+        var seq = ('00' + (i + 1)).slice(-3);
+        var originalText = formattedText.originalText;
+        // Assign either barcode or formatted text based on condition
+        var buffer = (data.etc === '2') ? barcode : formattedText.text;
+
+        // Update data detail with sequence number, original text, and buffer
+        Object.assign(data, { seq, originalText, buffer });
+    }
+}
+
+/**
+ * Formats the input text according to specified alignment, highlight, and width.
+ * @param {string} txtInput - The input text to be formatted.
+ * @param {string} alignment - The alignment of the text. '0' for left, '1' for center, '2' for right, '3' for both.
+ * @param {string} highlight - The type of highlighting. '0' for normal, '1' for bold, '2' for double-W, '3' for double-H,, '4' for double-WH, '5' for underline.
+ * @param {number} width - The width of the text block.
+ * @returns {object} An object containing the formatted text and the original input text.
+ */
+function fnFormatText(txtInput, alignment = '0', highlight = '0', width = 40) {
+    // Adjust width if highlighting is double-W or double-WH
+    if (highlight === '2' || highlight === '4') {
+        width = Math.floor(width / 2);
+    }
+
+    // Cut the text to fit within the specified width
+    var cutTextSize = fnCutTextSize(txtInput, width);
+    var originalText = txtInput;
+    var text = cutTextSize.text;
+    var widthSpace = Math.max(0, width - cutTextSize.bytes);
+
+    // Apply alignment
+    switch (alignment) {
+        case '0': // Left alignment
+            text += ' '.repeat(widthSpace);
+            break;
+        case '1': // Center alignment
+            var leftSpaces = Math.floor(widthSpace / 2);
+            var rightSpaces = widthSpace - leftSpaces;
+            text = ' '.repeat(leftSpaces) + text + ' '.repeat(rightSpaces);
+            break;
+        case '2': // Right alignment
+            text = ' '.repeat(widthSpace) + text;
+            break;
+        case '3': // Both alignment
+            //TODO: handle both sides
+            break;
+        default:
+            break;
+    }
+
+    return { text, originalText };
+}
+
+/**
+ * Cuts the input text to fit within the specified width, considering multi-byte characters.
+ * @param {string} inputText - The input text to be cut.
+ * @param {number} maxWidth - The maximum width the text can occupy.
+ * @returns {object} An object containing the cut text and its bytes.
+ */
+function fnCutTextSize(inputText, maxWidth) {
+    var text = '';
+    var bytes = 0;
+    var inputLength = inputText.length;
+
+    for (var i = 0; i < inputLength; i++) {
+        var char = inputText[i];
+        // Check if the character is a multi-byte character
+        var charLength = (char.charCodeAt(0) > 127) ? 2 : 1;
+        bytes += charLength;
+        // If adding the current character exceeds the width, stop adding characters
+        if (bytes > maxWidth) {
+            break;
+        }
+        text += char;
+    }
+
+    return { text, bytes };
+}
+
+</script>
+
+</body>
+</html>
