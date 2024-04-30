@@ -105,73 +105,65 @@ label:has(input[type="radio"]:disabled) {
 
 <div class="container">
 <div class="row">
-    <div class="col-md-8" style="background-color: #dddddd; margin-bottom: 50px;">
-        <div class="row">
-            <!-- <div class="col-md-5">
-                <div style="margin-bottom: 23px;">Print Line</div>
-                <textarea class="non-resize-textarea" id="txtInputText" rows="1" cols="41"></textarea>
-            </div> -->
-            <div class="col-md-12" style="background-color: #ffc9c9;">
-                <table id="tblOptions">
-                    <thead>
-                        <tr>
-                            <th>
-                                Print line
-                            </th>
-                            <th>
-                                Alignment
-                                <br/>
-                                <select name="alignmentAll" id="alignmentAll">
-                                    <option value="">---</option>
-                                    <option value="0">Left</option>
-                                    <option value="1">Center</option>
-                                    <option value="2">Right</option>
-                                </select>
-                            </th>
-                            <th>
-                                Highlight
-                                <br>
-                                <select name="highlightAll" id="highlightAll">
-                                    <option value="">---</option>
-                                    <option value="0">Normal</option>
-                                    <option value="1">Bold</option>
-                                    <option value="2">DoubleW</option>
-                                    <option value="3">DoubleH</option>
-                                    <option value="4">DoubleWH</option>
-                                </select>
-                            </th>
-                            <th>
-                                Etc
-                                <br>
-                                <select name="etcAll" id="etcAll">
-                                    <option value="">---</option>
-                                    <option value="0">Normal</option>
-                                    <option value="1">Gift Code</option>
-                                    <option value="2">Barcode</option>
-                                </select>
-                            </th>
-                            <th>
-                                EJS
-                                <br>
-                                <select name="ejsAll" id="ejsAll">
-                                    <option value="">---</option>
-                                    <option value="1">Normal</option>
-                                    <option value="0">None</option>
-                                    <option value="2">EJS only</option>
-                                </select>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr id="txtInputTextMain">
-                            <td rowspan="3" style="padding: 0;">
-                                <textarea class="non-resize-textarea" id="txtInputText" rows="1" cols="41"></textarea>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+    <div class="col-md-8" style="background-color: #81cdff; margin-bottom: 50px;">
+        <table id="tblOptions">
+            <thead>
+                <tr>
+                    <th>
+                        Print line
+                    </th>
+                    <th>
+                        Etc
+                        <br>
+                        <select name="etcAll" id="etcAll">
+                            <option value="">---</option>
+                            <option value="0">Normal</option>
+                            <option value="1">Gift Code</option>
+                            <option value="2">Barcode</option>
+                        </select>
+                    </th>
+                    <th>
+                        Alignment
+                        <br/>
+                        <select name="alignmentAll" id="alignmentAll">
+                            <option value="">---</option>
+                            <option value="0">Left</option>
+                            <option value="1">Center</option>
+                            <option value="2">Right</option>
+                        </select>
+                    </th>
+                    <th>
+                        Highlight
+                        <br>
+                        <select name="highlightAll" id="highlightAll">
+                            <option value="">---</option>
+                            <option value="0">Normal</option>
+                            <option value="1">Bold</option>
+                            <option value="2">DoubleW</option>
+                            <option value="3">DoubleH</option>
+                            <option value="4">DoubleWH</option>
+                        </select>
+                    </th>
+                    <th>
+                        EJS
+                        <br>
+                        <select name="ejsAll" id="ejsAll">
+                            <option value="">---</option>
+                            <option value="1">Normal</option>
+                            <option value="0">None</option>
+                            <option value="2">EJS only</option>
+                        </select>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr id="txtInputTextMain">
+                    <td rowspan="3" style="padding: 0;">
+                        <textarea id="txtEventText" class="non-resize-textarea" rows="1" cols="41"></textarea>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
     <div id="previewBill" class="col-md-4 preview">
         <pre>태그의 각 줄 미리보기</pre>
@@ -242,9 +234,9 @@ label:has(input[type="radio"]:disabled) {
         fnRenderPreviewDetail('#previewBill');
 
         // Handle input events in the main text area
-        $('#txtInputText').on('input', function() {
+        $('#txtEventText').on('input', function() {
             // Automatically add newlines when needed
-            fnAutoAdjustNewlines('#txtInputText');
+            fnAutoAdjustNewlines('#txtEventText');
 
             // Render the body of the table with updated row options
             fnRenderRowBodyTable('#tblOptions tbody');
@@ -312,9 +304,9 @@ label:has(input[type="radio"]:disabled) {
         });
 
         // Handle click events in the main text area
-        $('#txtInputText').on('click', function() {
+        $('#txtEventText').on('click', function() {
             // Get the current line number of the caret position
-            var currentLine = fnGetCaretLineNumber('#txtInputText');
+            var currentLine = fnGetCaretLineNumber('#txtEventText');
 
             // Update the editing information
             _editingInfo.previousLine = currentLine;
@@ -337,9 +329,9 @@ label:has(input[type="radio"]:disabled) {
      */
     function fnUpdateAllOptionsDetail(row) {
         // Extract select elements for global options from the row
-        var alignmentAllElement = row.find('select').eq(0);
-        var highlightAllElement = row.find('select').eq(1);
-        var etcAllElement = row.find('select').eq(2);
+        var etcAllElement = row.find('select').eq(0);
+        var alignmentAllElement = row.find('select').eq(1);
+        var highlightAllElement = row.find('select').eq(2);
         var ejsAllElement = row.find('select').eq(3);
 
         // Get the values of global alignment, highlight, etc, and ejs from the select elements
@@ -385,9 +377,9 @@ label:has(input[type="radio"]:disabled) {
      */
     function fnUpdateOptionsDetail(row) {
         // Extract select elements from the row
-        var alignmentElement = row.find('select').eq(0);
-        var highlightElement = row.find('select').eq(1);
-        var etcElement = row.find('select').eq(2);
+        var etcElement = row.find('select').eq(0);
+        var alignmentElement = row.find('select').eq(1);
+        var highlightElement = row.find('select').eq(2);
         var ejsElement = row.find('select').eq(3);
 
         // Get the values of alignment, highlight, etc, and ejs from the select elements
@@ -532,6 +524,13 @@ label:has(input[type="radio"]:disabled) {
         var htmlContent =
             '<tr id="seq' + seq + '" data-seq="' + seq + '">' +
                 '<td>' +
+                    '<select name="etc' + seq + '">' +
+                        '<option value="0" ' + (etc === '0' ? 'selected' : '') + '>Normal</option>' +
+                        '<option value="1" ' + (etc === '1' ? 'selected' : '') + '>Gift Code</option>' +
+                        '<option value="2" ' + (etc === '2' ? 'selected' : '') + '>Barcode</option>' +
+                    '</select>' +
+                '</td>' +
+                '<td>' +
                     '<select name="alignment' + seq + '" ' + (etc !== '0' ? 'disabled' : '') + '>' +
                         '<option value="0" ' + (alignment === '0' ? 'selected' : '') + '>Left</option>' +
                         '<option value="1" ' + (alignment === '1' ? 'selected' : '') + '>Center</option>' +
@@ -545,13 +544,6 @@ label:has(input[type="radio"]:disabled) {
                         '<option value="2" ' + (highlight === '2' ? 'selected' : '') + '>DoubleW</option>' +
                         '<option value="3" ' + (highlight === '3' ? 'selected' : '') + '>DoubleH</option>' +
                         '<option value="4" ' + (highlight === '4' ? 'selected' : '') + '>DoubleWH</option>' +
-                    '</select>' +
-                '</td>' +
-                '<td>' +
-                    '<select name="etc' + seq + '">' +
-                        '<option value="0" ' + (etc === '0' ? 'selected' : '') + '>Normal</option>' +
-                        '<option value="1" ' + (etc === '1' ? 'selected' : '') + '>Gift Code</option>' +
-                        '<option value="2" ' + (etc === '2' ? 'selected' : '') + '>Barcode</option>' +
                     '</select>' +
                 '</td>' +
                 '<td>' +

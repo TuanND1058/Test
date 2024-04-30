@@ -1,44 +1,34 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
+
 <head>
+    <meta charset="UTF-8">
     <title>Dropdown với Checkbox</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
     <style>
-        /* Tạo kiểu cho dropdown */
+        /* Tạo kiểu cho custom-select */
         .custom-select {
             position: relative;
             display: inline-block;
-            width: 200px;
-        }
-
-        .select-button {
-            padding: 5px 10px;
-            width: 100%;
-            background-color: #007bff;
-            color: white;
-            border: none;
             cursor: pointer;
         }
 
+        /* Tạo kiểu cho dropdown-list */
         .dropdown-list {
             position: absolute;
-            top: 100%;
-            left: 0;
             z-index: 1;
             display: none;
             background-color: white;
             border: 1px solid #ccc;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-            width: 100%;
-            box-sizing: border-box;
-            max-height: 300px;
+            max-height: 150px;
             overflow-y: auto;
         }
 
-        /* Tạo kiểu cho các tùy chọn */
+        /* Tạo kiểu cho các tùy chọn trong danh sách thả xuống */
         .dropdown-list label {
             display: block;
-            padding: 0 5px;
+            padding: 5px;
             cursor: pointer;
         }
 
@@ -47,187 +37,135 @@
         }
     </style>
 </head>
+
 <body>
-    <div class="custom-select">
-        <button class="select-button">Chọn tùy chọn</button>
-        <div class="dropdown-list">
-            <label><input type="checkbox" id="all-option" value="all"> Tất cả</label>
-            <label><input type="checkbox" id="odd-option" value="odd"> Số lẻ</label>
-            <label><input type="checkbox" id="even-option" value="even"> Số chẵn</label>
-            <label><input type="checkbox" value="1"> Tùy chọn 1</label>
-            <label><input type="checkbox" value="2"> Tùy chọn 2</label>
-            <label><input type="checkbox" value="3"> Tùy chọn 3</label>
-            <label><input type="checkbox" value="4"> Tùy chọn 4</label>
-            <label><input type="checkbox" value="5"> Tùy chọn 5</label>
-            <label><input type="checkbox" value="6"> Tùy chọn 6</label>
-            <!-- Thêm các tùy chọn khác tại đây -->
-        </div>
-        <input type="hidden" id="selected-values" name="selected-values" value="000000">
+<input type="time" name="" id="">
+<input type="time" name="" id="">
+
+    <!-- Dropdown đầu tiên -->
+    <div class="custom-select" data-dropdown-id="dropdown1">
+        <select><option>--------------</option></select>
+        <input type="hidden" id="selected-values1" value="0000">
+    </div>
+
+    <!-- Dropdown thứ hai -->
+    <div class="custom-select" data-dropdown-id="dropdown2">
+        <select><option>-----------===========================---</option></select>
+        <input type="hidden" id="selected-values2" value="0000">
+    </div>
+
+    <!-- Danh sách thả xuống -->
+    <div class="dropdown-list" data-dropdown-id="dropdown1">
+        <label><input type="checkbox" class="selectedAll" /> Tất cả</label>
+        <label><input type="checkbox" /> Tùy chọn 1</label>
+        <label><input type="checkbox" /> Tùy chọn 2</label>
+        <label><input type="checkbox" /> Tùy chọn 3</label>
+        <!-- Thêm các tùy chọn khác tại đây -->
+    </div>
+
+    <div class="dropdown-list" data-dropdown-id="dropdown2">
+        <label><input type="checkbox" class="selectedAll" /> Tất cả</label>
+        <label><input type="checkbox" /> Tùy chọn A</label>
+        <label><input type="checkbox" /> Tùy chọn B</label>
+        <!-- Thêm các tùy chọn khác tại đây -->
     </div>
 
     <script>
-        // $(document).ready(function() {
-        //     // Khi nhấp vào nút chọn, hiển thị hoặc ẩn dropdown list
-        //     $('.select-button').click(function() {
-        //         $('.dropdown-list').toggle();
-        //     });
-
-        //     // Đóng dropdown khi nhấp ra ngoài nó
-        //     $(document).click(function(event) {
-        //         if (!$(event.target).closest('.custom-select').length) {
-        //             $('.dropdown-list').hide();
-        //         }
-        //     });
-
-        //     // Xử lý sự kiện khi tùy chọn "All" được chọn hoặc bỏ chọn
-        //     $('#all-option').change(function() {
-        //         var isChecked = $(this).is(':checked');
-        //         $('.dropdown-list input[type="checkbox"]').not(this).prop('checked', isChecked);
-        //     });
-
-        //     // Xử lý sự kiện khi tùy chọn "Odd" (số lẻ) được chọn hoặc bỏ chọn
-        //     $('#odd-option').change(function() {
-        //         var isChecked = $(this).is(':checked');
-        //         $('.dropdown-list input[type="checkbox"]').not('#all-option, #odd-option, #even-option').each(function() {
-        //             var value = parseInt($(this).val());
-        //             // Chọn hoặc bỏ chọn option nếu giá trị là số lẻ
-        //             if (value % 2 === 1) {
-        //                 $(this).prop('checked', isChecked);
-        //             }
-        //         });
-        //     });
-
-        //     // Xử lý sự kiện khi tùy chọn "Even" (số chẵn) được chọn hoặc bỏ chọn
-        //     $('#even-option').change(function() {
-        //         var isChecked = $(this).is(':checked');
-        //         $('.dropdown-list input[type="checkbox"]').not('#all-option, #odd-option, #even-option').each(function() {
-        //             var value = parseInt($(this).val());
-        //             // Chọn hoặc bỏ chọn option nếu giá trị là số chẵn
-        //             if (value % 2 === 0) {
-        //                 $(this).prop('checked', isChecked);
-        //             }
-        //         });
-        //     });
-
-        //     // Xử lý sự kiện thay đổi cho các tùy chọn khác
-        //     $('.dropdown-list input[type="checkbox"]').not('#all-option, #odd-option, #even-option').change(function() {
-        //         var allChecked = true;
-        //         var oddChecked = true;
-        //         var evenChecked = true;
-
-        //         // Kiểm tra xem tất cả các tùy chọn khác đều được chọn
-        //         $('.dropdown-list input[type="checkbox"]').not('#all-option, #odd-option, #even-option').each(function() {
-
-        //             if (!$(this).is(':checked')) {
-        //                 allChecked = false;
-        //                 if (parseInt($(this).val()) % 2 === 0) {
-        //                     oddChecked = false;
-        //                 } else {
-        //                     evenChecked = false;
-        //                 }
-        //             } else {
-        //                 if (parseInt($(this).val()) % 2 === 0) {
-        //                     oddChecked = false;
-        //                 } else {
-        //                     evenChecked = false;
-        //                 }
-        //             }
-        //         });
-
-        //         $('#all-option').prop('checked', allChecked);
-        //         $('#odd-option').prop('checked', oddChecked);
-        //         $('#even-option').prop('checked', evenChecked);
-        //     });
-        // });
-
         $(document).ready(function() {
-            function updateHiddenInput() {
-                var selectedValues = [];
-                $('.dropdown-list input[type="checkbox"]').not('#all-option, #odd-option, #even-option').each(function() {
-                    if (!$(this).is(':checked')) {
-                        selectedValues.push('0');
-                    } else {
-                        selectedValues.push('1');
-                    }
-                });
+            // Hàm định vị dropdown-list dựa trên custom-select
+            function positionDropdownList(dropdownId) {
+                var dropdown = $('.custom-select[data-dropdown-id="' + dropdownId + '"]');
+                var dropdownList = $('.dropdown-list[data-dropdown-id="' + dropdownId + '"]');
 
-                $('#selected-values').val(selectedValues.join(''));
+                // Lấy vị trí của custom-select
+                var dropdownOffset = dropdown.offset();
+
+                // Định vị dropdown-list theo custom-select
+                dropdownList.css({
+                    top: dropdownOffset.top + dropdown.outerHeight(),
+                    left: dropdownOffset.left,
+                    width: dropdown.outerWidth()
+                });
             }
 
-            $('.select-button').click(function() {
-                $('.dropdown-list').toggle();
-            });
+            // Hàm cập nhật input ẩn
+            function updateHiddenInput(dropdownId) {
+                var dropdown = $('.custom-select[data-dropdown-id="' + dropdownId + '"]');
+                var dropdownList = $('.dropdown-list[data-dropdown-id="' + dropdownId + '"]');
+                var hiddenInput = dropdown.find('input[type="hidden"]');
+                var checkboxes = dropdownList.find('input[type="checkbox"]').not('.selectedAll');
+                var selectedValues = checkboxes.map(function() {
+                    return $(this).is(':checked') ? '1' : '0';
+                }).get().join('');
+                hiddenInput.val(selectedValues);
+            }
 
+            // Xử lý sự kiện khi nhấp vào bất kỳ nơi nào trên trang
+            // $(document).click(function(event) {
+            //     // Kiểm tra xem sự kiện nhấp chuột có xảy ra bên ngoài custom-select và dropdown-list hay không
+            //     var isOutside = !$(event.target).closest('.custom-select, .dropdown-list').length;
+
+            //     if (isOutside) {
+            //         $('.dropdown-list').hide();
+            //     }
+            // });
+
+                // Xử lý sự kiện khi nhấp vào bất kỳ nơi nào trên trang
             $(document).click(function(event) {
-                if (!$(event.target).closest('.custom-select').length) {
-                    $('.dropdown-list').hide();
-                }
-            });
-
-            $('#all-option').change(function() {
-                var isChecked = $(this).is(':checked');
-                $('.dropdown-list input[type="checkbox"]').not(this).prop('checked', isChecked);
-                updateHiddenInput();
-            });
-
-            $('#odd-option').change(function() {
-                var isChecked = $(this).is(':checked');
-                $('.dropdown-list input[type="checkbox"]').not('#all-option, #odd-option, #even-option').each(function() {
-                    var value = parseInt($(this).val());
-                    if (value % 2 !== 0) {
-                        $(this).prop('checked', isChecked);
+                $('.custom-select').each(function() {
+                    var dropdown = $(this);
+                    var dropdownId = dropdown.data('dropdown-id');
+                    var dropdownList = $('.dropdown-list[data-dropdown-id="' + dropdownId + '"]');
+                    if ((!dropdown.is(event.target) && !dropdown.has(event.target).length) && (!dropdownList.is(event.target) && !dropdownList.has(event.target).length)) {
+                        dropdownList.hide();
                     }
-                });
-                updateHiddenInput();
+                })
             });
 
-            $('#even-option').change(function() {
-                var isChecked = $(this).is(':checked');
-                $('.dropdown-list input[type="checkbox"]').not('#all-option, #odd-option, #even-option').each(function() {
-                    var value = parseInt($(this).val());
-                    if (value % 2 === 0) {
-                        $(this).prop('checked', isChecked);
-                    }
-                });
-                updateHiddenInput();
+            $('.custom-select select').mousedown(function(event) {
+                event.preventDefault();
+            })
+
+            // Xử lý sự kiện khi nhấp vào select
+            $('.custom-select select').on('click', function() {
+                var dropdown = $(this).closest('.custom-select');
+                var dropdownId = dropdown.data('dropdown-id');
+                var dropdownList = $('.dropdown-list[data-dropdown-id="' + dropdownId + '"]');
+
+                $('.dropdown-list').hide();
+
+                // Định vị dropdown-list
+                positionDropdownList(dropdownId);
+
+                // Ẩn hoặc hiện dropdown-list
+                dropdownList.toggle();
             });
 
-            $('.dropdown-list input[type="checkbox"]').not('#all-option, #odd-option, #even-option').change(function() {
-                var allChecked = true;
-                var oddChecked = true;
-                var evenChecked = true;
-                console.log('========', oddChecked, evenChecked);
-var i=1
-                $('.dropdown-list input[type="checkbox"]').not('#all-option, #odd-option, #even-option').each(function() {
-                    var value = parseInt($(this).val());
-
-                    console.log(i, oddChecked, evenChecked);
-
-                    if (!$(this).is(':checked')) {
-                        allChecked = false;
-                        if (value % 2 === 0) {
-                            oddChecked = false;
-                        } else {
-                            evenChecked = false;
-                        }
-                    } else {
-                        if (value % 2 === 0) {
-                            oddChecked = false;
-                        } else {
-                            evenChecked = false;
-                        }
-                    }
-
-                    console.log(i++, oddChecked, evenChecked);
+            // Xử lý sự kiện thay đổi checkbox trong danh sách thả xuống
+            $('.dropdown-list input[type="checkbox"]').not('.selectedAll').on('change', function() {
+                var dropdownId = $(this).closest('.dropdown-list').data('dropdown-id');
+                var dropdownList = $('.dropdown-list[data-dropdown-id="' + dropdownId + '"]');
+                var allChecked = dropdownList.find('input[type="checkbox"]').not('.selectedAll').get().every(function(checkbox) {
+                    return $(checkbox).is(':checked');
                 });
 
-                $('#all-option').prop('checked', allChecked);
-                $('#odd-option').prop('checked', oddChecked);
-                $('#even-option').prop('checked', evenChecked);
-
-                updateHiddenInput();
+                dropdownList.find('.selectedAll').prop('checked', allChecked);
+                updateHiddenInput(dropdownId);
             });
+
+            // Xử lý sự kiện thay đổi checkbox "Tất cả"
+            $('input.selectedAll').on('change', function() {
+                var dropdownId = $(this).closest('.dropdown-list').data('dropdown-id');
+                var dropdownList = $('.dropdown-list[data-dropdown-id="' + dropdownId + '"]');
+                var isChecked = $(this).is(':checked');
+
+                dropdownList.find('input[type="checkbox"]').not(this).prop('checked', isChecked);
+                updateHiddenInput(dropdownId);
+            });
+
+
         });
     </script>
 </body>
+
 </html>
