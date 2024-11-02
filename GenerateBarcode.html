@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Barcode Generator</title>
+    <!-- Thêm JsBarcode từ CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            margin-top: 50px;
+        }
+        input, textarea {
+            margin-bottom: 20px;
+            padding: 8px;
+            font-size: 16px;
+            width: 500px;
+        }
+        pre {
+            font-size: 16px;
+            margin: 30px 0 0 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Barcode Generator</h1>
+    <textarea type="text" id="barcodeInputName" placeholder="Name"></textarea>
+    <input type="text" id="barcodeInput" placeholder="Enter text for barcode" />
+    <button onclick="generateBarcode()">Generate Barcode</button>
+    <pre id="barcodeName"></pre>
+    <svg id="barcode"></svg>
+
+    <script>
+        const inputName = document.getElementById("barcodeInputName");
+        inputName.addEventListener("input", function () {
+            const barcodeName = document.getElementById("barcodeName");
+            barcodeName.innerHTML = this.value;
+        })
+
+        function generateBarcode() {
+            // Lấy giá trị từ ô input
+            const inputText = document.getElementById("barcodeInput").value;
+            // Kiểm tra nếu input không rỗng
+            if (inputText) {
+                // Sử dụng JsBarcode để tạo mã vạch
+                JsBarcode("#barcode", inputText, {
+                    format: "CODE128",
+                    lineColor: "#000",
+                    width: 3,
+                    height: 75,
+                    displayValue: true
+                });
+            } else {
+                alert("Please enter text to generate the barcode.");
+            }
+        }
+    </script>
+</body>
+</html>
